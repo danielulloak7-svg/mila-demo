@@ -987,8 +987,11 @@
     html,body{background:#fff !important;height:auto !important;overflow:visible !important}
     body>*:not(#printRoot){display:none !important}
     #printRoot,#printRoot *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
-    #printRoot{display:block !important;color:#1c1814;font-family:"Hanken Grotesk",-apple-system,system-ui,sans-serif}
-    .pr-doc-head{text-align:center;margin-bottom:9mm}
+    #printRoot{display:block !important}
+  }
+  /* layout rules live at global scope so a stand-alone print window (iOS-friendly) can render them on screen too */
+  #printRoot{color:#1c1814;font-family:"Hanken Grotesk",-apple-system,system-ui,sans-serif}
+  .pr-doc-head{text-align:center;margin-bottom:9mm}
     .pr-logo{font-family:"Fraunces",Georgia,serif;font-size:26pt;letter-spacing:9px;font-weight:500}
     .pr-doc-title{font-family:"Fraunces",Georgia,serif;font-size:15pt;font-style:italic;color:#8f6f45;margin-top:2mm}
     .pr-doc-sub{font-size:7.5pt;letter-spacing:2.5px;color:#8e8576;text-transform:uppercase;margin-top:2mm}
@@ -1032,7 +1035,6 @@
     .pr-wprod{font-size:8pt;color:#8e8576;margin-top:.3mm}
     .pr-wp{font-size:9pt;color:#8f6f45;white-space:nowrap}
     .pr-foot{margin-top:7mm;padding-top:3mm;border-top:1px solid #e5dfd0;text-align:center;font-size:7.5pt;color:#8e8576;letter-spacing:.5px}
-  }
 
 
   /* ---- wizard: allergen-source linking step ---- */
@@ -3583,12 +3585,27 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     return h+foot();
   }
   var B={food:buildFood,bev:buildBev,wine:buildWine,spirits:buildSpirit};
+  function inPagePrint(inner){
+    var root=document.getElementById('printRoot'); if(!root){root=document.createElement('div');root.id='printRoot';document.body.appendChild(root);}
+    root.innerHTML=inner;
+    setTimeout(function(){try{window.print();}catch(err){}},80);
+  }
+  function openPrint(inner){
+    var w=null; try{w=window.open('','_blank');}catch(e){}
+    if(!w){ inPagePrint(inner); return; }   /* popup blocked -> in-page fallback */
+    var styles=''; [].forEach.call(document.querySelectorAll('style'),function(s){styles+=s.textContent+'\n';});
+    var ov='html,body{overflow:auto !important;height:auto !important;min-height:0 !important;position:static !important;margin:0 !important;background:#e7e0d2 !important}'
+      +'#printRoot{display:block !important;background:#fff;max-width:210mm;margin:16px auto;padding:14mm;box-shadow:0 4px 30px rgba(0,0,0,.18);border-radius:5px}'
+      +'#printRoot,#printRoot *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}'
+      +'@media print{html,body{background:#fff !important}#printRoot{margin:0;padding:0;max-width:none;box-shadow:none;border-radius:0}}';
+    var doc='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MILĀ — Menu</title><style>'+styles+'</style><style>'+ov+'</style></head><body><div id="printRoot">'+inner+'</div>'
+      +'<scr'+'ipt>window.focus();setTimeout(function(){try{window.print();}catch(e){}},500);</scr'+'ipt></body></html>';
+    w.document.open(); w.document.write(doc); w.document.close();
+  }
   document.addEventListener('click',function(e){
     var b=e.target.closest('[data-print]'); if(!b)return;
     var fn=B[b.getAttribute('data-print')]; if(!fn)return;
-    var root=document.getElementById('printRoot'); if(!root){root=document.createElement('div');root.id='printRoot';document.body.appendChild(root);}
-    root.innerHTML=fn();
-    setTimeout(function(){try{window.print();}catch(err){}},80);
+    openPrint(fn());
   });
 })();
 </script>
