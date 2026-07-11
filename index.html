@@ -949,18 +949,22 @@
   .view:not(.collapsed):not(.col-anim) .sectitle{transition:none}
   .view.col-anim:not(.collapsed) .fbox,
   .view.col-anim:not(.collapsed) .fbox .searchbar{transition:padding .34s cubic-bezier(.4,.05,.2,1),margin .34s cubic-bezier(.4,.05,.2,1),max-height .34s cubic-bezier(.4,.05,.2,1),opacity .3s ease}
-  /* --- iOS standalone bottom gap: pin the scroll container to the true viewport --- */
-  .app{position:fixed;top:0;right:0;bottom:0;left:0;margin:0 auto;height:auto;min-height:0}
+  /* --- iOS standalone bottom gap: full height without position:fixed (lighter for WebKit / avoids compositing crashes) --- */
+  html,body{height:100%}
+  .app{height:100% !important;min-height:0 !important}
 
 
   :root{--ease-out:cubic-bezier(.22,.61,.36,1);--ease-spring:cubic-bezier(.34,1.4,.5,1)}
   @media (prefers-reduced-motion: no-preference){
     /* directional page transitions — spatial continuity (shared-axis X): forward slides in
        from the right, Back from the left, so navigation has a sense of place */
-    html[data-navdir=fwd] .view:not(.hidden){animation:zaphNavFwd .40s var(--ease-out) both}
-    html[data-navdir=back] .view:not(.hidden){animation:zaphNavBack .40s var(--ease-out) both}
-    @keyframes zaphNavFwd{from{opacity:0;transform:translate3d(28px,0,0)}to{opacity:1;transform:none}}
-    @keyframes zaphNavBack{from{opacity:0;transform:translate3d(-28px,0,0)}to{opacity:1;transform:none}}
+    /* opacity-only page transitions — NEVER transform the whole view (transforming a feed
+       full of large images forces an oversized GPU layer that crashes iOS Safari) */
+    .view:not(.hidden){animation:zaphFadeIn .30s var(--ease-out) both}
+    html[data-navdir=fwd] .view:not(.hidden),html[data-navdir=back] .view:not(.hidden){animation:zaphFadeIn .30s var(--ease-out) both}
+    @keyframes zaphFadeIn{from{opacity:0}to{opacity:1}}
+    /* item entrance: opacity-only too — translating image cards spawns many large layers on iOS */
+    @keyframes zaphItemIn{from{opacity:0}to{opacity:1}}
     /* entrance for the wine + spirit lists (were missing) with a light, capped stagger */
     #wineList > *,#spiritList > *{animation:zaphItemIn .34s var(--ease-out) both}
     #wineList > *:nth-child(2),#spiritList > *:nth-child(2){animation-delay:.03s}
