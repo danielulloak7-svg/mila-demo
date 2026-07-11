@@ -997,8 +997,13 @@
     .pr-doc-sub{font-size:7.5pt;letter-spacing:2.5px;color:#8e8576;text-transform:uppercase;margin-top:2mm}
     .pr-sec{font-size:10pt;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8f6f45;border-bottom:1px solid #e5dfd0;padding-bottom:1.6mm;margin:6mm 0 3.5mm;break-after:avoid}
     /* image is the protagonist: large photo, info alongside, ~4 dishes per page */
-    .pr-item{display:flex;gap:7mm;align-items:flex-start;break-inside:avoid;min-height:56mm;margin-bottom:8mm;padding-bottom:6mm;border-bottom:1px solid #e5dfd0}
-    .pr-img{width:56mm;height:56mm;flex:none;border-radius:4mm;object-fit:cover;background-size:cover;background-position:center;border:1px solid #eee;box-shadow:0 1mm 3mm rgba(42,36,28,.12)}
+    /* exactly two cards per printed page */
+    .pr-page{break-inside:avoid;break-after:page;page-break-after:always}
+    .pr-page:last-child{break-after:auto;page-break-after:auto}
+    .pr-item{display:flex;gap:7mm;align-items:flex-start;break-inside:avoid;margin-bottom:10mm;padding-bottom:8mm;border-bottom:1px solid #e5dfd0}
+    .pr-page > .pr-item:last-child,.pr-page > .pr-sec + .pr-item:last-child{border-bottom:none}
+    /* portrait image so tall shots (e.g. cocktails) fit fully without cropping */
+    .pr-img{width:52mm;height:68mm;flex:none;border-radius:4mm;object-fit:cover;background:#f4f0e8;background-size:cover;background-position:center;border:1px solid #eee;box-shadow:0 1mm 3mm rgba(42,36,28,.12)}
     .pr-img.ph{background:#efe9dd}
     .pr-info{flex:1;min-width:0}
     .pr-nm{font-family:"Fraunces",Georgia,serif;font-size:14pt;font-weight:600;display:flex;justify-content:space-between;gap:4mm;line-height:1.12}
@@ -3531,30 +3536,26 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
   function algchips(item,arr){if(!arr||!arr.length)return '';var chips=arr.map(function(a){var st=algStatus(item,a);var e=EMX[a]||'⚠';return '<span class="pr-ac st-'+st+'">'+e+' '+esc(a)+'<span class="w">'+ALGW[st]+'</span></span>';}).join('');return '<div class="pr-alghead">Allergens</div><div class="pr-alg2">'+chips+'</div>';}
   function alegend(){return '<div class="pr-leg"><b>Allergen key</b><span><i class="i"></i>Inherent · can’t remove</span><span><i class="r"></i>Verified removable</span><span><i class="p"></i>Pending kitchen check</span></div>';}
   var FOOD_ORDER=["TAPAS","RAW BAR","SALADS","SIGNATURES","WATER","EARTH","VEGETABLES","SUSHI","PASTRY"];
+  function foodItem(d){return '<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l">'+esc(d.tableside)+'</div>':'')+comp('Ingredients',d.ingredients,'ing')+comp('Sauces',d.sauces,'sau')+comp('Garnish',d.garnish,'gar')+(d.plating?'<div class="pr-l"><b>Plating:</b> '+esc(d.plating)+'</div>':'')+algchips(d.name,d.allerg)+'</div></div>';}
+  function bevItem(d){var base=(d.base&&d.base.length)?d.base.map(function(b){return b[0]+(b[1]?' ('+b[1]+')':'');}):[];return '<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l">'+esc(d.tableside)+'</div>':'')+comp('Base',base,'sau')+comp('Ingredients',d.ingredients,'ing')+comp('Garnish',d.garnish,'gar')+algchips(d.name,d.allerg)+'</div></div>';}
+  /* pack units (each = optional section header + one card) into fixed pages of 2 so print is exactly 2/page regardless of device scaling */
+  function paginate(units){var h='';for(var i=0;i<units.length;i+=2){h+='<div class="pr-page">'+units[i]+(units[i+1]||'')+'</div>';}return h;}
   function buildFood(){
-    var h=head('Food Menu')+alegend();
+    var units=[],lastSec=null;
     FOOD_ORDER.forEach(function(sec){
       var items=(typeof FOOD!=='undefined'?FOOD:[]).filter(function(d){return (d.cat||'').toUpperCase()===sec;});
-      if(!items.length)return;
-      h+='<div class="pr-sec">'+sec+'</div>';
-      items.forEach(function(d){
-        h+='<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l">'+esc(d.tableside)+'</div>':'')+comp('Ingredients',d.ingredients,'ing')+comp('Sauces',d.sauces,'sau')+comp('Garnish',d.garnish,'gar')+(d.plating?'<div class="pr-l"><b>Plating:</b> '+esc(d.plating)+'</div>':'')+algchips(d.name,d.allerg)+'</div></div>';
-      });
+      items.forEach(function(d){var hdr=(sec!==lastSec)?'<div class="pr-sec">'+sec+'</div>':'';lastSec=sec;units.push(hdr+foodItem(d));});
     });
-    return h+foot();
+    return head('Food Menu')+alegend()+paginate(units)+foot();
   }
   function buildBev(){
-    var h=head('Drinks Menu')+alegend();
     var ck=(typeof BEV!=='undefined'?BEV:[]).filter(function(d){return d.kind!=='wine';});
     var senses=[];ck.forEach(function(d){if(senses.indexOf(d.sense)<0)senses.push(d.sense);});
+    var units=[],lastSec=null;
     senses.forEach(function(sn){
-      h+='<div class="pr-sec">'+esc(sn)+'</div>';
-      ck.filter(function(d){return d.sense===sn;}).forEach(function(d){
-        var base=(d.base&&d.base.length)?d.base.map(function(b){return b[0]+(b[1]?' ('+b[1]+')':'');}):[];
-        h+='<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l">'+esc(d.tableside)+'</div>':'')+comp('Base',base,'sau')+comp('Ingredients',d.ingredients,'ing')+comp('Garnish',d.garnish,'gar')+algchips(d.name,d.allerg)+'</div></div>';
-      });
+      ck.filter(function(d){return d.sense===sn;}).forEach(function(d){var hdr=(sn!==lastSec)?'<div class="pr-sec">'+esc(sn)+'</div>':'';lastSec=sn;units.push(hdr+bevItem(d));});
     });
-    return h+foot();
+    return head('Drinks Menu')+alegend()+paginate(units)+foot();
   }
   function buildWine(){
     var h=head('Wine List');
@@ -3595,11 +3596,16 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     if(!w){ inPagePrint(inner); return; }   /* popup blocked -> in-page fallback */
     var styles=''; [].forEach.call(document.querySelectorAll('style'),function(s){styles+=s.textContent+'\n';});
     var ov='html,body{overflow:auto !important;height:auto !important;min-height:0 !important;position:static !important;margin:0 !important;background:#e7e0d2 !important}'
-      +'#printRoot{display:block !important;background:#fff;max-width:210mm;margin:16px auto;padding:14mm;box-shadow:0 4px 30px rgba(0,0,0,.18);border-radius:5px}'
+      +'#printRoot{display:block !important;background:#fff;max-width:210mm;margin:66px auto 20px;padding:14mm;box-shadow:0 4px 30px rgba(0,0,0,.18);border-radius:5px}'
       +'#printRoot,#printRoot *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}'
-      +'@media print{html,body{background:#fff !important}#printRoot{margin:0;padding:0;max-width:none;box-shadow:none;border-radius:0}}';
-    var doc='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MILĀ — Menu</title><style>'+styles+'</style><style>'+ov+'</style></head><body><div id="printRoot">'+inner+'</div>'
-      +'<scr'+'ipt>window.focus();setTimeout(function(){try{window.print();}catch(e){}},500);</scr'+'ipt></body></html>';
+      +'.pr-bar{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;gap:8px;justify-content:center;align-items:center;padding:9px;background:rgba(28,24,20,.94);box-shadow:0 2px 12px rgba(0,0,0,.25)}'
+      +'.pr-bar button{appearance:none;font-family:-apple-system,system-ui,sans-serif;font-size:14px;font-weight:700;padding:10px 18px;border-radius:12px;border:none;cursor:pointer}'
+      +'.pr-b1{background:#c9a24a;color:#1c1814}.pr-b2{background:transparent;color:#f3f0e9;border:1px solid rgba(243,240,233,.45)}'
+      +'@media print{html,body{background:#fff !important}.pr-bar{display:none !important}#printRoot{margin:0 !important;padding:0;max-width:none;box-shadow:none;border-radius:0}}';
+    var doc='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MILĀ — Menu</title><style>'+styles+'</style><style>'+ov+'</style></head><body>'
+      +'<div class="pr-bar"><button class="pr-b1" onclick="window.print()">Print / Save PDF</button><button class="pr-b2" onclick="window.close()">Close</button></div>'
+      +'<div id="printRoot">'+inner+'</div>'
+      +'<scr'+'ipt>window.focus();setTimeout(function(){try{window.print();}catch(e){}},600);</scr'+'ipt></body></html>';
     w.document.open(); w.document.write(doc); w.document.close();
   }
   document.addEventListener('click',function(e){
