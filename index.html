@@ -1376,7 +1376,7 @@
   <div class="secwrap">
     <div class="h1">Notifications</div><div class="sub">Everything management publishes to the floor.</div><div class="up-bar"><span class="up-count" id="upCount"></span><button class="up-mark" id="upMark">Mark all read</button></div><div class="up-sec">New</div>
     <div class="notif"><div class="nic"><svg viewBox="0 0 24 24"><path d="M4 14c0-4.4 3.6-8 8-8s8 3.6 8 8"/><path d="M4 14h16l-1.5 4.5a2 2 0 0 1-1.9 1.3H7.4a2 2 0 0 1-1.9-1.3z"/><circle cx="12" cy="12" r="1.2"/></svg></div><div class="nm" data-dish="oysters-gf"><span class="pls-ncat gold">MENU UPDATE</span><div class="nt">Oyster of the day changed — now serving <b>Miyagi</b> (Miyagi Prefecture, Japan). Half-dozen $30.</div><div class="ntime">Just now</div></div><span class="ndot"></span></div>
-    <div class="notif"><div class="nic">🍷</div><div class="nm" data-nav="bev"><span class="pls-ncat">WINE · BTG</span><div class="nt">New BTG wine — <b>Et Fille Pinot Noir</b> (Willamette Valley 2022, 92 pts James Suckling) is now poured by the glass. Study the new card in Drinks.</div><div class="ntime">Jul 10</div></div><span class="ndot"></span></div>
+    <div class="notif"><div class="nic">🍷</div><div class="nm" data-drink="et-fille-pinot-noir"><span class="pls-ncat">WINE · BTG</span><div class="nt">New BTG wine — <b>Et Fille Pinot Noir</b> (Willamette Valley 2022, 92 pts James Suckling) is now poured by the glass. Tap to study the new card.</div><div class="ntime">Jul 10</div></div><span class="ndot"></span></div>
     <div class="notif"><div class="nic">⛔</div><div class="nm"><span class="pls-ncat">WINE · BTG</span><div class="nt"><b>Mateo Pinot Noir</b> removed from the BTG list — no longer available by the glass.</div><div class="ntime">Jul 10</div></div><span class="ndot"></span></div>
     <div class="notif"><div class="nic"><svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6L12 15.8 6.9 18.3l1.2-5.6L4 8.9l5.6-.6z"/></svg></div><div class="nm" data-dish="dry-aged-wagyu-sliders"><span class="pls-ncat gold">SPECIAL</span><div class="nt">Special update — <b>Dry Aged Wagyu Sliders</b> now runs <b>every Friday &amp; Saturday</b>, no longer a one-day special.</div><div class="ntime">Jul 11</div></div><span class="ndot"></span></div>
     <div class="notif"><div class="nic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></div><div class="nm"><span class="pls-ncat">MENU</span><div class="nt">New dish added — ‘Shawarma’ Wagyu Gyoza is now on the menu. Tap to read it.</div><div class="ntime">3h ago</div></div><span class="ndot"></span></div>
@@ -2313,7 +2313,7 @@
           <div class="fbottom"><span class="alpill">⚠ ${d.allerg.join(" · ")}</span></div><button class="detailsbtn" data-flip>details ↗</button>`
       :`<div class="dname">${d.name}</div><div class="dsub">${d.sub}</div>
           <div class="fbottom">${d.price?`<span class="dprice">${d.price}</span>`:''}<span class="alpill">⚠ ${d.allerg.join(" · ")}</span></div><button class="detailsbtn" data-flip>details ↗</button>`;
-    return `<div class="dish"><div class="flip">
+    return `<div class="dish" data-key="${dishKey(d.name)}"><div class="flip">
       ${front}
         <span class="catpill b">${d.sense}</span>
         <div class="fgrad">${fInfo}</div>
@@ -3714,7 +3714,7 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
   window.PULSE_FEED=[
     {kind:'oyster',emo:'🦪',tag:'MENU UPDATE',tagc:'gold',title:'Today’s oyster: Miyagi',sub:'Half-dozen · updated by Kitchen · tap to view',posted:now,live:true,dish:findDish(/oyster/i)},
     {kind:'special',emo:'✨',tag:'ACTIVE SPECIAL',tagc:'spec',title:'Dry Aged Wagyu Sliders',sub:'Now running EVERY Friday & Saturday (updated Jul 11) — no longer a one-day special',posted:now-1*D,sched:'FRI & SAT',dish:findDish(/sliders/i)||'dry-aged-wagyu-sliders',prov:true},
-    {kind:'btg-add',emo:'🍷',tag:'NEW BTG WINE',tagc:'add',title:'Et Fille Pinot Noir joins the glass pour',sub:'Willamette Valley 2022 · 92 pts James Suckling — new card in Drinks',posted:now-2*D,nav:'bev'},
+    {kind:'btg-add',emo:'🍷',tag:'NEW BTG WINE',tagc:'add',title:'Et Fille Pinot Noir joins the glass pour',sub:'Willamette Valley 2022 · 92 pts James Suckling — tap to study the new card',posted:now-2*D,drink:'et-fille-pinot-noir'},
     {kind:'btg-out',emo:'⛔',tag:'BTG · REMOVED',tagc:'out',title:'Mateo Pinot Noir is off the glass pour',sub:'No longer available by the glass — stop offering it',posted:now-2*D},
     {kind:'dish-add',emo:'🍽️',tag:'NEW DISH',tagc:'add',title:'‘Shawarma’ Wagyu Gyoza added',sub:'Signatures · tap to study the card',posted:now-1*D,dish:findDish(/gyoza/i)},
     {kind:'dish-out',emo:'⛔',tag:'REMOVED',tagc:'out',title:'Chicken Yakitori is off the menu',sub:'Removed from the menu — stop offering it',posted:now-4*D}
@@ -3731,7 +3731,7 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     var h='<div class="pf-head"><b>WHAT’S NEW</b><span class="pf-hint">auto-clears after '+WIN+' days</span></div>';
     window.PULSE_FEED.forEach(function(p){
       var lf=leftOf(p); if(!lf)return;
-      var attrs=p.dish?' data-dish="'+p.dish+'"':(p.nav?' data-nav="'+p.nav+'"':'');
+      var attrs=p.dish?' data-dish="'+p.dish+'"':(p.drink?' data-drink="'+p.drink+'"':(p.nav?' data-nav="'+p.nav+'"':''));
       h+='<div class="pf-card"'+attrs+'><span class="pf-emo">'+p.emo+'</span><div class="pf-m"><span class="pf-tag t-'+(p.tagc||'gold')+'">'+p.tag+'</span><div class="pf-tt">'+p.title+'</div><div class="pf-sub">'+p.sub+'</div></div><div class="pf-side">'+(p.prov?'<span class="pls-prov">PROVISIONAL</span>':'')+'<span class="pf-left '+lf.cls+'">'+lf.t+'</span></div></div>';
     });
     el.innerHTML=h;
@@ -3752,5 +3752,30 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     var nf=e.target.closest('#view-updates .notif'); if(nf&&!nf.classList.contains('read')){nf.classList.add('read');upSync();}
   });
   upSync();
+})();
+</script>
+<script>
+(function(){
+  window.goToDrink=function(key){
+    document.querySelectorAll('#bevFeed .flip.flipped').forEach(function(f){f.classList.remove('flipped');});
+    if(typeof go==='function')go('bev');
+    setTimeout(function(){
+      var v=document.getElementById('view-bev'); if(v)v.classList.add('collapsed');
+      var card=document.querySelector('#bevFeed .dish[data-key="'+key+'"]');
+      if(!card)return;
+      var fl=card.querySelector('.flip'); if(fl)fl.classList.add('flipped');
+      var app=document.querySelector('.app');
+      setTimeout(function(){
+        var bar=document.querySelector('#view-bev .fbox');
+        var off=(bar?bar.getBoundingClientRect().height:110)+14;
+        var top=card.getBoundingClientRect().top+(app?app.scrollTop:0)-off;
+        if(app)app.scrollTo({top:Math.max(0,top)}); else window.scrollTo(0,Math.max(0,top));
+      },300);
+    },40);
+  };
+  document.addEventListener('click',function(e){
+    var el=e.target.closest('[data-drink]');
+    if(el){e.stopPropagation();window.goToDrink(el.getAttribute('data-drink'));}
+  });
 })();
 </script>
