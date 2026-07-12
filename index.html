@@ -1070,6 +1070,10 @@
   .lk-sign{margin-top:10px;font-size:11px;color:#3f6b4b;font-weight:600}
   .lk-empty{font-size:13px;color:var(--muted);font-style:italic;padding:16px 4px;line-height:1.5}
   .lk-hint{font-size:11px;color:var(--muted);font-style:italic}
+  .lk-note{width:100%;box-sizing:border-box;font-family:inherit;font-size:12.5px;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-height:50px;resize:vertical;margin-top:2px;line-height:1.4}
+  .lk-note:focus{outline:none;border-color:rgba(176,141,87,.55)}
+  .lk-clear{appearance:none;font-family:inherit;width:100%;margin-top:11px;font-size:11.5px;font-weight:600;color:var(--danger);background:transparent;border:1px solid rgba(180,82,74,.35);border-radius:11px;padding:9px;cursor:pointer}
+  .lk-clear:active{transform:scale(.98)}
 
 
   .catpill{transition:opacity .2s ease}
@@ -3175,10 +3179,12 @@
         pool.forEach(function(c){h+='<button class="lk-cmp'+(l.component===c?' on':'')+'" data-lkcomp="'+esc(a)+'|'+esc(c)+'">'+esc(c)+'</button>';});
         h+='</div>';
         if(l.component){var sec=lkSection(l.component);h+='<div class="lk-secrow"><span class="lk-seclbl">Section</span><span class="lk-sechint">auto</span><span class="alsec sec-'+LKABBR[sec]+'">'+LKEMO[sec]+' '+sec+'</span></div>';}
+        h+='<div class="lk-lbl">Note (optional)</div><textarea class="lk-note" data-lknote="'+esc(a)+'" placeholder="e.g. hidden in the spice blend, served on the side…">'+esc(l.note||'')+'</textarea>';
         h+='<div class="lk-lbl">Removable on request?</div><div class="lk-tri">';
         ['yes','no','unknown'].forEach(function(r){h+='<button class="lk-tb '+r+((l.removable||'')===r?' on':'')+'" data-lkrem="'+esc(a)+'|'+r+'">'+(r==='yes'?'Yes':r==='no'?'No':'Not sure')+'</button>';});
         h+='</div>';
         if(l.component&&(l.removable==='yes'||l.removable==='no'))h+='<div class="lk-sign">✓ Signed by you on publish — marks this source verified</div>';
+        if(l.component)h+='<button class="lk-clear" data-lkclear="'+esc(a)+'">Remove link (keeps the allergen)</button>';
         h+='</div>';
       });
       h+=footer('Continue to review',true);return h;
@@ -3188,7 +3194,7 @@
       var present=ALLERGENS.filter(function(a){return W.allerg[a]==='present';});
       var sig='Daniel Ulloa · Manager';var d;try{d=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}catch(e){d='Jul 11, 2026';}
       var m=ALINK[name]||(ALINK[name]={});
-      present.forEach(function(a){var l=W.links[a];if(!l||!l.component)return;var rec={section:lkSection(l.component),component:l.component,note:'',removable:l.removable||'unknown',linkedBy:sig,linkedDate:d};if(l.removable==='yes'||l.removable==='no'){rec.verifiedBy=sig;rec.verifiedDate=d;}m[a]=rec;});
+      present.forEach(function(a){var l=W.links[a];if(!l||!l.component)return;var rec={section:lkSection(l.component),component:l.component,note:l.note||'',removable:l.removable||'unknown',linkedBy:sig,linkedDate:d};if(l.removable==='yes'||l.removable==='no'){rec.verifiedBy=sig;rec.verifiedDate=d;}m[a]=rec;});
     }
     function commitDish(){
       if(W.type&&W.type!=='Food')return;
@@ -3206,8 +3212,9 @@
     function render(){var s=document.getElementById('wizSteps'),b=document.getElementById('wizBody');if(!s||!b)return;var ti=document.getElementById('wizTitle'),pi=document.getElementById('wizPill');if(ti)ti.textContent=W.edit?'Edit Item':'Add Item';if(pi)pi.textContent=W.edit?'◆ MANAGER · EDIT ITEM':'◆ MANAGER · ADD ITEM';s.innerHTML=rSteps();b.innerHTML=step===1?rStep1():step===2?rStep2():step===3?rStep3():step===4?rStepLinks():rStep4();}
 
     window.__wizStart=function(){step=1;W=blank();render();};
-    window.openEditor=function(item){step=3;W=blank();W.edit=true;W.origName=item.name;W.type='Food';W.cat=item.cat||'';W.f.name=item.name||'';W.f.sub=item.sub||'';W.f.price=item.price||'';W.f.tableside=item.tableside||'';W.f.ingredients=(item.ingredients||[]).slice();W.f.sauces=(item.sauces||[]).slice();W.f.garnish=(item.garnish||[]).slice();W.f.prep=item.prep||'';(item.allerg||[]).forEach(function(a){var key=null;ALLERGENS.forEach(function(x){if(x.toLowerCase()===String(a).toLowerCase())key=x;});if(key)W.allerg[key]='present';else if(/onion|garlic|shallot|chive|allium/i.test(a))W.allerg.Allium='present';else if(/seafood|fish|anchov|dashi/i.test(a))W.allerg.Fish='present';else if(/shell|shrimp|crab|lobster/i.test(a))W.allerg.Shellfish='present';});try{if(typeof ALINK!=='undefined'&&ALINK[item.name]){Object.keys(ALINK[item.name]).forEach(function(al){var _x=ALINK[item.name][al];W.links[al]={component:(_x.component||'').split(', ')[0],removable:_x.removable};});}}catch(e){}W.newTerms=detectNew();render();go('additem');};
+    window.openEditor=function(item){step=3;W=blank();W.edit=true;W.origName=item.name;W.type='Food';W.cat=item.cat||'';W.f.name=item.name||'';W.f.sub=item.sub||'';W.f.price=item.price||'';W.f.tableside=item.tableside||'';W.f.ingredients=(item.ingredients||[]).slice();W.f.sauces=(item.sauces||[]).slice();W.f.garnish=(item.garnish||[]).slice();W.f.prep=item.prep||'';(item.allerg||[]).forEach(function(a){var key=null;ALLERGENS.forEach(function(x){if(x.toLowerCase()===String(a).toLowerCase())key=x;});if(key)W.allerg[key]='present';else if(/onion|garlic|shallot|chive|allium/i.test(a))W.allerg.Allium='present';else if(/seafood|fish|anchov|dashi/i.test(a))W.allerg.Fish='present';else if(/shell|shrimp|crab|lobster/i.test(a))W.allerg.Shellfish='present';});try{if(typeof ALINK!=='undefined'&&ALINK[item.name]){Object.keys(ALINK[item.name]).forEach(function(al){var _x=ALINK[item.name][al];W.links[al]={component:(_x.component||'').split(', ')[0],removable:_x.removable,note:_x.note||''};});}}catch(e){}W.newTerms=detectNew();render();go('additem');};
 
+    document.addEventListener('input',function(e){var t=e.target;if(t&&t.getAttribute&&t.getAttribute('data-lknote')!=null&&t.closest&&t.closest('#view-additem')){var a=t.getAttribute('data-lknote');W.links[a]=W.links[a]||{};W.links[a].note=t.value;}});
     document.addEventListener('click',function(e){
       if(!e.target.closest('#view-additem'))return;var t;
       if((t=e.target.closest('[data-wtype]'))){W.type=t.getAttribute('data-wtype');W.cat='';render();return;}
@@ -3216,6 +3223,7 @@
       if((t=e.target.closest('[data-alg]'))){var a=t.getAttribute('data-alg'),st=t.getAttribute('data-st');W.allerg[a]=st;var seg=t.parentElement;[].forEach.call(seg.children,function(btn){btn.classList.toggle('on',btn.getAttribute('data-st')===st);});return;}
       if((t=e.target.closest('[data-lkcomp]'))){var _p=t.getAttribute('data-lkcomp').split('|');W.links[_p[0]]=W.links[_p[0]]||{};W.links[_p[0]].component=(W.links[_p[0]].component===_p[1]?'':_p[1]);render();return;}
       if((t=e.target.closest('[data-lkrem]'))){var _q=t.getAttribute('data-lkrem').split('|');W.links[_q[0]]=W.links[_q[0]]||{};W.links[_q[0]].removable=_q[1];render();return;}
+      if((t=e.target.closest('[data-lkclear]'))){var _c=t.getAttribute('data-lkclear');W.links[_c]={note:(W.links[_c]&&W.links[_c].note)||''};render();return;}
       if(e.target.closest('[data-wback]')){if(step===3&&W.edit){go('manage');return;}if(step>1)step--;render();return;}
       if(e.target.closest('[data-wnext]')){if(step===1){step=2;render();}else if(step===3){readEditor();step=4;render();}else if(step===4){step=5;render();}else if(step===5){commitDish();commitLinks();W.published=true;render();}return;}
       if(e.target.closest('[data-wdone]')){go('manage');return;}
