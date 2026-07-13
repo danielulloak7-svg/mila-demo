@@ -84,6 +84,19 @@
 
 
   /* Pulse dashboard v2 — bento */
+  /* ONE Pulse module under the section title: Weekly Points hero + feed share the frame */
+  .pulse-mod{background:linear-gradient(180deg,rgba(30,77,73,.055),rgba(176,141,87,.045));border:1px solid var(--line);border-radius:22px;padding:10px 10px 4px;margin:4px 0 22px}
+  .pulse-mod .pls-hero{margin:0 0 12px}
+  .pulse-mod .pf-head{margin-left:3px;margin-right:3px}
+  .pfd-dot{width:7px;height:7px;border-radius:50%;background:#4E7C5A;box-shadow:0 0 0 3px rgba(78,124,90,.18);animation:pfdPulse 2.2s ease-in-out infinite}
+  @keyframes pfdPulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .pfd-count{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:9px;background:var(--gold-deep);color:var(--cream);font-size:9.5px;font-weight:800;letter-spacing:0;padding:0 5px;margin-left:7px;vertical-align:1px}
+  .pfd-carwrap{position:relative}
+  .pfd-carwrap::after{content:"";position:absolute;top:0;right:-2px;bottom:10px;width:36px;background:linear-gradient(90deg,rgba(243,240,233,0),#f0ece3 88%);pointer-events:none;border-radius:0 14px 14px 0;opacity:1;transition:opacity .3s}
+  .pfd-carwrap.at-end::after{opacity:0}
+  .pfd-dots{display:flex;justify-content:center;gap:6px;margin:0 0 10px}
+  .pfd-dots i{width:6px;height:6px;border-radius:50%;background:rgba(142,133,118,.35);transition:width .25s ease,background .25s ease;cursor:pointer}
+  .pfd-dots i.on{background:var(--gold-deep);width:16px;border-radius:3px}
   .pfd-pins{display:flex;flex-direction:column;gap:7px;margin-bottom:4px}
   .pfd-pin{display:flex;align-items:center;gap:10px;background:var(--cream-card);border:1px solid var(--line);border-left:3px solid rgba(190,160,70,.6);border-radius:12px;padding:9px 11px}
   .pfd-pin-emo{font-size:17px;flex:none}
@@ -113,6 +126,32 @@
   .pfd-card-s{font-size:10px;color:var(--muted);line-height:1.4;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .pfd-card .pf-left{align-self:flex-start}
   .pfd-pin.pf-static,.pfd-card.pf-static{opacity:.92}
+
+
+  /* stat tiles: colour-coded accents */
+  .mgr-ov-item{border-top:3px solid transparent}
+  .mgr-ov-item:nth-child(1){border-top-color:rgba(30,77,73,.55)}
+  .mgr-ov-item:nth-child(2){border-top-color:rgba(176,141,87,.65)}
+  .mgr-ov-item:nth-child(3){border-top-color:rgba(214,120,20,.6)}
+  .mgr-ov-item:nth-child(1) .mgr-ov-n{color:#1e4d49}
+  .mgr-ov-item:nth-child(2) .mgr-ov-n{color:var(--gold-deep)}
+  .mgr-ov-item:nth-child(3) .mgr-ov-n{color:#b2600d}
+  /* tool grid */
+  #mgrHub{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px}
+  #mgrHub .mgr-sect{grid-column:1/-1;margin-bottom:-2px}
+  #mgrHub .mgr-scope{grid-column:1/-1}
+  #mgrHub .mgr-row{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:0;padding:13px 13px 11px;position:relative;border-radius:16px}
+  #mgrHub .mgr-row-ic{flex:none;width:38px;height:38px;border-radius:12px}
+  #mgrHub .mgr-row-main{width:100%}
+  #mgrHub .mgr-row-tt{font-size:14.5px;line-height:1.15}
+  #mgrHub .mgr-row-ds{white-space:normal;line-height:1.35;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  #mgrHub .mgr-row-chip{position:absolute;top:11px;right:11px}
+  #mgrHub .mgr-row-arrow{display:none}
+  /* quick actions */
+  .mgr-qa-t{flex-basis:100%;font-size:9.5px;font-weight:800;letter-spacing:1.8px;color:var(--muted);text-transform:uppercase;margin:10px 0 -1px}
+  .mgr-qa{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 2px}
+  .mgr-qa-chip{appearance:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--ink);background:var(--cream-card);border:1px solid var(--line);border-radius:18px;padding:8px 13px;cursor:pointer;box-shadow:var(--e1);transition:transform .1s ease}
+  .mgr-qa-chip:active{transform:scale(.96)}
 
 </style>
 <style>
@@ -2148,14 +2187,14 @@
 
   document.getElementById('homeBody').innerHTML=`
         <div class="section">${head('MILĀ PULSE')}
-      <div class="pls-hero" data-nav="weekly"><div class="pls-hero-body">
+      <div class="pulse-mod"><div class="pls-hero" data-nav="weekly"><div class="pls-hero-body">
         <div class="pls-hk">THIS WEEK</div>
         <div class="pls-ht">Weekly Points</div>
         <div class="pls-hd">Jul 6 – Jul 12 · published Monday</div>
         <div class="pls-hchips"><span>📣 Reviews</span><span>🐟 Seabream Carpaccio</span><span>🥃 Japanese Whiskey</span><span>🍷 Dessert Wines</span><span>⚠ Fin Fish</span></div>
         <div class="pls-hgo"><span>9 points this week</span><span>Open the issue ›</span></div>
       </div></div>
-      <div id="pulseFeed"></div>
+      <div id="pulseFeed"></div></div>
     </div>
     <div class="section">${head('MENU &amp; KNOWLEDGE')}<div class="grid two">
       ${card('food','Food Menu','68 dishes · 9 sections',{flag:1,nav:'food'})}
@@ -3219,7 +3258,7 @@
       var L=lvl();
       var tab=document.getElementById('tabManage'),pulse=document.getElementById('tabPulse');
       if(tab)tab.style.display=L>=1?'':'none';
-      if(pulse)pulse.style.display=L>=1?'none':'';
+      if(pulse)pulse.style.display='none'; /* Home IS Pulse — staff stays 3 tabs + Ask */
       window.isManager=L>=2;window.userLevel=L;
       if(rolePill)rolePill.textContent=ROLES[roleIdx].n;
       var pill=document.getElementById('mgrPill');if(pill)pill.textContent='◆ '+LVLNAME[L].toUpperCase();
@@ -4115,12 +4154,29 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
         return '<div class="pfd-row pf-card"'+attrsOf(p)+'><span class="pfd-pin-emo">'+p.emo+'</span><div class="pfd-pin-m"><span class="pf-tag t-'+(p.tagc||'gold')+'">'+p.tag+'</span><div class="pfd-pin-t" style="margin-top:3px">'+p.title+'</div></div><div class="pfd-side">'+(p.prov?'<span class="pls-prov">PROVISIONAL</span>':'')+'<span class="pf-left thru">'+lf.t+'</span></div></div>';}).join('');
     }
     if(win.length){
-      h+='<div class="pf-head"><b>IN &amp; OUT THIS WEEK</b><span class="pf-hint">swipe → · auto-clears after '+WIN+' days</span></div><div class="pfd-car">'
+      h+='<div class="pf-head"><b>IN &amp; OUT THIS WEEK<span class="pfd-count">'+win.length+'</span></b><span class="pf-hint">swipe → · auto-clears after '+WIN+' days</span></div>'
+        +'<div class="pfd-carwrap"><div class="pfd-car">'
         +win.map(function(x){var p=x[0],lf=x[1];
           return '<div class="pfd-card pf-card"'+attrsOf(p)+'><div class="pfd-card-top"><span class="pfd-card-emo">'+p.emo+'</span><span class="pf-tag t-'+(p.tagc||'gold')+'">'+p.tag+'</span></div><div class="pfd-card-t">'+p.title+'</div><div class="pfd-card-s">'+p.sub+'</div><span class="pf-left '+lf.cls+'">'+lf.t+'</span></div>';}).join('')
-        +'</div>';
+        +'</div></div><div class="pfd-dots">'+win.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>';}).join('')+'</div>';
     }
     el.innerHTML=h;
+    /* carousel: position dots + edge fade */
+    var car=el.querySelector('.pfd-car');
+    if(car){
+      var dots=[].slice.call(el.querySelectorAll('.pfd-dots i'));
+      var wrap=car.parentNode;
+      function upd(){
+        var w=car.firstElementChild?(car.firstElementChild.offsetWidth+9):214;
+        var idx=Math.round(car.scrollLeft/w); if(idx>=dots.length)idx=dots.length-1; if(idx<0)idx=0;
+        if(car.scrollLeft+car.clientWidth>=car.scrollWidth-8)idx=dots.length-1;
+        dots.forEach(function(d,i){d.className=(i===idx)?'on':'';});
+        wrap.classList.toggle('at-end',car.scrollLeft+car.clientWidth>=car.scrollWidth-8);
+      }
+      car.addEventListener('scroll',function(){requestAnimationFrame(upd);},{passive:true});
+      dots.forEach(function(d,i){d.addEventListener('click',function(){var w=car.firstElementChild?(car.firstElementChild.offsetWidth+9):214;car.scrollTo({left:i*w,behavior:'smooth'});});});
+      upd();
+    }
   }
   window.pushPulse=function(p){p.posted=Date.now();window.PULSE_FEED.unshift(p);renderPulse();};
   window.renderPulse=renderPulse;
@@ -4197,8 +4253,14 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     var h='<div class="mgr-need-t">Needs your attention</div>';
     if(pending)h+='<button class="mgr-need-chip warn" data-mgo="verify">🕒 '+pending+' pending review'+(pending!==1?'s':'')+'</button>';
     if(u.unlinked)h+='<button class="mgr-need-chip warn" data-mgo="alink">⚠ '+u.unlinked+' allergen flag'+(u.unlinked!==1?'s':'')+' unlinked</button>';
-    h+='<button class="mgr-need-chip gold" data-mgo="weeklyedit">📝 Weekly Points — draft</button>';
     if(!pending&&!u.unlinked)h+='<span class="mgr-need-chip ok">✓ All caught up</span>';
+    h+='<div class="mgr-qa-t">Quick actions</div><div class="mgr-qa" style="flex-basis:100%">'
+      +'<button class="mgr-qa-chip" data-mgo="post">📌 Pin a notice</button>'
+      +'<button class="mgr-qa-chip" data-mgo="creator">✨ New special</button>'
+      +'<button class="mgr-qa-chip" data-mgo="additem">🍽 Add item</button>'
+      +'<button class="mgr-qa-chip" data-mgo="weeklyedit">📝 Weekly draft</button>'
+      +'<button class="mgr-qa-chip" data-mgo="team">👥 Invite member</button>'
+      +'</div>';
     strip.innerHTML=h;
   }
   var _shm=window.show; if(_shm)window.show=function(v){_shm(v);if(v==='manage')setTimeout(refreshHub,30);};
