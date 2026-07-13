@@ -63,6 +63,25 @@
   .wp-hl{display:flex;gap:8px;font-size:11.5px;color:var(--ink);line-height:1.5;background:var(--cream-card);border:1px solid var(--line);border-radius:11px;padding:8px 11px;margin-bottom:6px}
   .wp-hl span:first-child{flex:none;color:var(--gold-deep)}
 
+
+  /* front-facing cards must never trap the pan gesture — internal scroll only when flipped */
+  .flip:not(.flipped) .face.back{pointer-events:none}
+  .flip:not(.flipped) .backscroll{overflow:hidden!important;overscroll-behavior:auto!important}
+  .flip.flipped .face.front{pointer-events:none}
+
+  .pf-tag.t-mgr{color:#4a4336;background:rgba(60,52,40,.09);border-color:rgba(60,52,40,.32)}
+
+  .sp-live{appearance:none;font-family:inherit;width:100%;display:flex;align-items:center;gap:11px;text-align:left;background:var(--cream-card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;margin:4px 0 8px}
+  .sp-live:active{transform:scale(.99)}
+  .sp-live-em{font-size:20px;flex:none}
+  .sp-live-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .sp-live-m b{font-family:var(--serif);font-size:15px;color:var(--ink)}
+  .sp-live-m span{font-size:10.5px;color:var(--muted)}
+  .sp-live-go{font-size:10.5px;font-weight:700;color:var(--gold-deep);white-space:nowrap}
+  .sp-newbtn{appearance:none;font-family:inherit;width:100%;font-size:13px;font-weight:700;color:var(--gold-deep);background:transparent;border:1.5px dashed rgba(176,141,87,.55);border-radius:14px;padding:13px;cursor:pointer;margin-bottom:10px}
+  .sp-newbtn:active{transform:scale(.99)}
+  .inp.ph{color:var(--muted-soft);font-style:italic}
+
 </style>
 <style>
   :root{
@@ -1055,44 +1074,48 @@
   }
   /* layout rules live at global scope so a stand-alone print window (iOS-friendly) can render them on screen too */
   #printRoot{color:#1c1814;font-family:"Hanken Grotesk",-apple-system,system-ui,sans-serif}
-  .pr-doc-head{text-align:center;margin-bottom:9mm}
-    .pr-logo{font-family:"Fraunces",Georgia,serif;font-size:26pt;letter-spacing:9px;font-weight:500}
-    .pr-doc-title{font-family:"Fraunces",Georgia,serif;font-size:15pt;font-style:italic;color:#8f6f45;margin-top:2mm}
-    .pr-doc-sub{font-size:7.5pt;letter-spacing:2.5px;color:#8e8576;text-transform:uppercase;margin-top:2mm}
-    .pr-sec{font-size:10pt;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8f6f45;border-bottom:1px solid #e5dfd0;padding-bottom:1.6mm;margin:6mm 0 3.5mm;break-after:avoid}
+  .pr-doc-head{text-align:center;margin-bottom:2.5mm;flex:none}
+    .pr-logo{font-family:"Fraunces",Georgia,serif;font-size:15pt;letter-spacing:6px;font-weight:500}
+    .pr-doc-title{font-family:"Fraunces",Georgia,serif;font-size:10.5pt;font-style:italic;color:#8f6f45;margin-top:1mm}
+    .pr-doc-sub{font-size:6.5pt;letter-spacing:2px;color:#8e8576;text-transform:uppercase;margin-top:1mm}
+    .pr-sec{font-size:8.5pt;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#8f6f45;border-bottom:1px solid #e5dfd0;padding-bottom:1mm;margin:0 0 2mm;break-after:avoid;flex:none}
     /* image is the protagonist: large photo, info alongside, ~4 dishes per page */
     /* exactly two cards per printed page */
-    .pr-page{break-inside:avoid;break-after:page;page-break-after:always}
+    .pr-page{height:240mm;display:flex;flex-direction:column;break-after:page;page-break-after:always;break-inside:avoid;overflow:hidden}
     .pr-page:last-child{break-after:auto;page-break-after:auto}
-    .pr-item{display:flex;gap:7mm;align-items:flex-start;break-inside:avoid;margin-bottom:10mm;padding-bottom:8mm;border-bottom:1px solid #e5dfd0}
-    .pr-page > .pr-item:last-child,.pr-page > .pr-sec + .pr-item:last-child{border-bottom:none}
+    .pr-unit{flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;border-bottom:1px solid #e5dfd0;padding-bottom:2.5mm;margin-bottom:2.5mm}
+    .pr-unit:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+    .pr-item{display:flex;gap:5mm;align-items:stretch;flex:1;min-height:0;margin:0;padding:0;border:none}
+    .pr-item .pr-img{align-self:flex-start}
     /* portrait image so tall shots (e.g. cocktails) fit fully without cropping */
-    .pr-img{width:52mm;height:68mm;flex:none;border-radius:4mm;object-fit:cover;background:#f4f0e8;background-size:cover;background-position:center;border:1px solid #eee;box-shadow:0 1mm 3mm rgba(42,36,28,.12)}
+    .pr-img{width:36mm;height:48mm;flex:none;border-radius:4mm;object-fit:cover;background:#f4f0e8;background-size:cover;background-position:center;border:1px solid #eee;box-shadow:0 1mm 3mm rgba(42,36,28,.12)}
     .pr-img.ph{background:#efe9dd}
-    .pr-info{flex:1;min-width:0}
-    .pr-nm{font-family:"Fraunces",Georgia,serif;font-size:14pt;font-weight:600;display:flex;justify-content:space-between;gap:4mm;line-height:1.12}
-    .pr-pr{color:#8f6f45;white-space:nowrap;font-size:12.5pt}
-    .pr-sub{font-size:9.5pt;font-style:italic;color:#555;margin:1.4mm 0 2.2mm}
-    .pr-l{font-size:9pt;line-height:1.45;margin-bottom:1mm;color:#2a241c}
+    .pr-info{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+    .pr-mid{flex:1 1 auto;min-height:0;overflow:hidden}
+    .pr-nm{font-family:"Fraunces",Georgia,serif;font-size:11.5pt;font-weight:600;display:flex;justify-content:space-between;gap:4mm;line-height:1.12}
+    .pr-pr{color:#8f6f45;white-space:nowrap;font-size:10.5pt}
+    .pr-sub{font-size:8pt;font-style:italic;color:#555;margin:.8mm 0 1.2mm}
+    .pr-l{font-size:7.8pt;line-height:1.32;margin-bottom:.6mm;color:#2a241c}
+    .pr-l.pr-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .pr-l b{color:#8f6f45;text-transform:uppercase;font-size:7.5pt;letter-spacing:.4px}
     .pr-alg{font-size:8.5pt;color:#b4524a;margin-top:2mm;font-weight:600}
     /* component chips (parity with the on-screen menu): emoji + section colour */
-    .pr-comp{display:flex;flex-wrap:wrap;gap:1.4mm;margin:.4mm 0 1.2mm}
-    .pr-clab{font-size:7pt;color:#8f6f45;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:1.8mm;margin-bottom:.5mm}
-    .pr-cc{font-size:7.6pt;border-radius:7px;padding:.7mm 1.9mm;display:inline-flex;align-items:center;gap:1mm;line-height:1.25;border:.3mm solid}
+    .pr-comp{display:flex;flex-wrap:wrap;gap:1.2mm;margin:.3mm 0 .8mm}
+    .pr-clab{font-size:6.2pt;color:#8f6f45;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:1mm;margin-bottom:.4mm}
+    .pr-cc{font-size:6.8pt;border-radius:6px;padding:.5mm 1.5mm;display:inline-flex;align-items:center;gap:1mm;line-height:1.25;border:.3mm solid}
     .pr-cc .em{font-size:7.6pt}
     .pr-cc.ing{color:#3c4a36;background:rgba(120,150,100,.15);border-color:rgba(120,150,100,.42)}
     .pr-cc.sau{color:#8a5a2f;background:rgba(176,120,60,.15);border-color:rgba(176,120,60,.44)}
     .pr-cc.gar{color:#534166;background:rgba(150,120,180,.15);border-color:rgba(150,120,180,.44)}
     /* allergen chips with 3-colour status */
-    .pr-alghead{font-size:7pt;color:#8f6f45;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:2.6mm;margin-bottom:.5mm}
+    .pr-alghead{font-size:6.2pt;color:#8f6f45;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:1.2mm;margin-bottom:.4mm}
     .pr-alg2{display:flex;flex-wrap:wrap;gap:1.6mm;align-items:center}
-    .pr-ac{font-size:7.8pt;font-weight:600;border-radius:7px;padding:.7mm 2mm;display:inline-flex;align-items:center;gap:1mm;line-height:1.2;border:.3mm solid}
+    .pr-ac{font-size:6.8pt;font-weight:600;border-radius:7px;padding:.7mm 2mm;display:inline-flex;align-items:center;gap:1mm;line-height:1.2;border:.3mm solid}
     .pr-ac .w{font-size:6.2pt;letter-spacing:.1px;font-weight:800;opacity:.92}
     .pr-ac.st-inherent{color:#a83226;background:rgba(178,59,50,.10);border-color:rgba(178,59,50,.5)}
     .pr-ac.st-removable{color:#7a5f00;background:rgba(230,190,40,.22);border-color:rgba(200,165,40,.62)}
     .pr-ac.st-pending{color:#b2600d;background:rgba(214,120,20,.12);border-color:rgba(214,120,20,.46)}
-    .pr-leg{font-size:6.6pt;color:#6b6355;margin:1mm 0 5mm;display:flex;gap:3mm;flex-wrap:wrap;align-items:center}
+    .pr-leg{flex:none;font-size:6.2pt;color:#6b6355;margin:0 0 2mm;display:flex;gap:3mm;flex-wrap:wrap;align-items:center}
     .pr-leg b{font-weight:700;color:#8f6f45;letter-spacing:.3px}
     .pr-leg span{display:inline-flex;align-items:center;gap:1.2mm}
     .pr-leg i{width:2mm;height:2mm;border-radius:50%;display:inline-block}
@@ -1486,16 +1509,22 @@
   <div class="secbar"><button class="backbtn" data-back>‹ Back</button></div>
   <div class="secwrap">
     <span class="mgr-pill">◆ MANAGER TOOLS</span>
-    <div class="h1">New Special</div>
-    <div class="sub">Same card as a dish flashcard. Snap a photo, fill the fields, publish.</div>
+    <div class="h1">Specials</div>
+    <div class="sub">Limited-time cards — provisional tier, separate from the verified catalog.</div>
+    <div class="uni-label" style="margin-top:14px">Active specials</div>
+    <button class="sp-live" data-dish="dry-aged-wagyu-sliders"><span class="sp-live-em">✨</span><span class="sp-live-m"><b>Dry Aged Wagyu Sliders</b><span>$40 · Every Fri &amp; Sat · provisional tier</span></span><span class="sp-live-go">View card ›</span></button>
+    <button class="sp-newbtn" id="spNew">＋ New special</button>
+    <div id="spComposer" style="display:none">
+    <div class="sub" style="margin-top:4px">Same card as a dish flashcard. Snap a photo, fill the fields, publish.</div>
     <div class="photobox"><div class="pi"><svg viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.2"/></svg></div><div class="ptx">Tap to add a photo</div></div>
-    <div class="field"><label>Name of dish</label><div class="inp">Dry Aged Wagyu Sliders</div></div>
-    <div class="field"><label>Tableside description</label><div class="inp">Dry aged wagyu sliders with French fries and the secret MILA burger sauce — two sliders, fries, and an extra portion of the sauce.</div></div>
-    <div class="field"><label>Price · Active dates</label><div class="inp">$40 · Every Fri &amp; Sat</div></div>
+    <div class="field"><label>Name of dish</label><div class="inp ph">Name as it reads on the card</div></div>
+    <div class="field"><label>Tableside description</label><div class="inp ph">Tableside description the runner can say verbatim…</div></div>
+    <div class="field"><label>Price · Active dates</label><div class="inp ph">$ · active dates or days</div></div>
     <div class="uni-label">Allergens — MILĀ universe</div>
-    <div class="uni"><span class="uchip on">Dairy</span><span class="uchip">Nuts</span><span class="uchip on">Egg</span><span class="uchip on">Allium</span><span class="uchip on">Gluten</span><span class="uchip on">Spice</span><span class="uchip on">Soy</span><span class="uchip">Citrus</span><span class="uchip on">Sesame</span><span class="uchip on">Alcohol</span><span class="uchip">Fish</span><span class="uchip">Shellfish</span><span class="uchip">Mustard</span><span class="uchip">Peanut</span><span class="uchip">Caffeine</span></div>
+    <div class="uni"><span class="uchip">Dairy</span><span class="uchip">Nuts</span><span class="uchip">Egg</span><span class="uchip">Allium</span><span class="uchip">Gluten</span><span class="uchip">Spice</span><span class="uchip">Soy</span><span class="uchip">Citrus</span><span class="uchip">Sesame</span><span class="uchip">Alcohol</span><span class="uchip">Fish</span><span class="uchip">Shellfish</span><span class="uchip">Mustard</span><span class="uchip">Peanut</span><span class="uchip">Caffeine</span></div>
     <div class="provnotice"><b>Provisional tier.</b> Flagged and kept separate from the verified catalog. Allergens are treated conservatively and won’t appear as “safe” in the free-from filter until verified.</div>
     <button class="publishbtn">Publish &amp; notify staff</button>
+    </div>
     <div class="pls-foot">Powered by <b>Zapheria ⬡</b></div>
   </div>
 </div>
@@ -1541,7 +1570,7 @@
     <div class="sub">Everything you publish reaches the floor and lands in Updates.</div>
     <button class="pub-opt" data-nav="post"><span class="po-ic"><svg viewBox="0 0 24 24"><path d="M3 10v4a1 1 0 0 0 1 1h3l5 4V5L7 9H4a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6"/></svg></span><span class="po-tx"><span class="po-t">General post</span><span class="po-s">Floor info, events, schedules, shout-outs, policy reminders</span></span><span class="po-ar">→</span></button>
     <button class="pub-opt" data-nav="creator"><span class="po-ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.6L12 15.8 6.9 18.3l1.2-5.6L4 8.9l5.6-.6z"/></svg></span><span class="po-tx"><span class="po-t">Special</span><span class="po-s">Limited-time dish or drink — lands inside the menu</span></span><span class="po-ar">→</span></button>
-    <button class="pub-opt" data-nav="weekly"><span class="po-ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4M9 15l2 2 4-4"/></svg></span><span class="po-tx"><span class="po-t">Weekly Points</span><span class="po-s">Assemble this week’s issue — pulls verified menu &amp; glossary</span></span><span class="po-ar">→</span></button>
+    
     <div class="pls-foot">Powered by <b>Zapheria ⬡</b></div>
   </div>
 </div>
@@ -1560,10 +1589,11 @@
     <div class="uni-label">Photo (optional)</div>
     <div class="photobox"><div class="pi"><svg viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.2"/></svg></div><div class="ptx">Tap to add a photo</div></div>
     <div class="postopts">
-      <div class="postopt"><span><span class="ico-in"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.3 7-11a7 7 0 0 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>Pin to Home (Today)</span><span class="toggle on"><span class="knob"></span></span></div>
+      <div class="postopt"><span><span class="ico-in"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.3 7-11a7 7 0 0 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>Pin to MILA Pulse</span><span class="toggle on"><span class="knob"></span></span></div>
       <div class="postopt"><span><span class="ico-in"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>Send notification</span><span class="toggle on"><span class="knob"></span></span></div>
       <div class="postopt"><span><span class="ico-in"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>Audience — All staff</span><span class="po-ar">›</span></div>
     </div>
+    <div class="uni-label">Pinned for — you set the duration</div><div class="uni" id="pinDur"><span class="uchip on">Today</span><span class="uchip">3 days</span><span class="uchip">1 week</span><span class="uchip">Until I unpin</span></div>
     <button class="publishbtn">Publish to floor</button>
     <div class="pls-foot">Powered by <b>Zapheria ⬡</b></div>
   </div>
@@ -1832,7 +1862,7 @@
     <div class="mgr-ov">
       <div class="mgr-ov-item"><div class="mgr-ov-n" id="ovItems">68</div><div class="mgr-ov-l">Items live</div></div>
       <div class="mgr-ov-item"><div class="mgr-ov-n" id="ovSpecial">1</div><div class="mgr-ov-l">Special active</div></div>
-      <div class="mgr-ov-item"><div class="mgr-ov-n" id="ovPending">5</div><div class="mgr-ov-l">Need review</div></div>
+      <div class="mgr-ov-item"><div class="mgr-ov-n" id="ovLinked">—</div><div class="mgr-ov-l">Allergens linked</div></div>
     </div>
     <div id="mgrHub"></div>
     <div class="mgr-note">Everything you publish runs through an <b>approval gate</b> — nothing enters the verified catalog without your confirmation. Specials stay in a separate provisional tier.</div>
@@ -2015,20 +2045,13 @@
   </div>
   <div class="msgs" id="msgs">
     <div class="row"><div class="bub ai welcome">Hi Dani 👋 Ask me anything about the menu, allergens, pairings, or service. I only answer from MILA's verified data.</div></div>
-    <div class="row me"><div class="bub me">Is the Hamachi Crudo safe for a tree-nut allergy?</div></div>
-    <div class="row"><div class="bub ai">The <b>Hamachi Crudo</b> contains no tree nuts in its listed components (coconut avocado coulis, cilantro oil). However, it's prepared in a shared station — confirm with the kitchen for severe allergies.
-      <div class="source"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>Source: Food menu · verified</div></div></div>
-    <div class="row me"><div class="bub me">What wine pairs with it?</div></div>
-    <div class="row"><div class="bub ai">A crisp, mineral white works best — the <b>Sancerre (Loire)</b> on the by-the-glass list complements the yuzu and avocado without overpowering the fish.
-      <div class="source"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>Source: Wine list · pairings</div></div></div>
-    <div class="row me"><div class="bub me">What's in a Jade Reverie?</div></div>
-    <div class="row"><div class="bub ai">A tropical tall drink — pandan-infused Bacardi 8 rum and E11even vodka, with pistachio-pandan orgeat, falernum, pandan liqueur, pineapple and lime, finished with a mist of Palo Santo. Heads up — it flags <b>Nuts, Citrus and Gluten</b>.
-      <div class="source"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>Source: Beverages · verified</div></div></div>
   </div>
-  <div class="ask-egl">Example questions</div>
+    <div class="ask-egl">Quick questions — answered from the verified core</div>
   <div class="chips">
+    <button class="chip">Tree-nut allergy — is the Hamachi Crudo safe?</button>
+    <button class="chip">Best wine pairings for the Hamachi?</button>
     <button class="chip">Allergens in the Wagyu?</button>
-    <button class="chip">How to pour sake</button>
+    <button class="chip">What's the current amuse?</button>
     <button class="chip">What's in a Jade Reverie?</button>
   </div>
   <div class="ask-preview"><span class="ask-pv-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span>Live questions are coming. Ask will answer <b>only from MILA's verified core</b> — never invented.</span></div>
@@ -2423,7 +2446,7 @@
       <div class="face back"><div class="backscroll">
         <div class="bname">${d.name}${provBadge}</div><div class="bdiv"></div>
         ${brow('Tableside',`<div class="bts">${d.tableside}</div>`)}
-        ${d.currentOyster?`<div class="curoy"><div class="coyk"><span class="live"></span>THIS WEEK’S OYSTER</div><div class="coyn">${d.currentOyster.name}</div><div class="coyo">${d.currentOyster.origin}</div><div class="coyp">${d.currentOyster.profile}</div><div class="coyu">✓ ${d.currentOyster.updated}</div></div>`:''}
+        ${d.currentOyster?`<div class="curoy"><div class="coyk"><span class="live"></span>CURRENT OYSTERS</div><div class="coyn">${d.currentOyster.name}</div><div class="coyo">${d.currentOyster.origin}</div><div class="coyp">${d.currentOyster.profile}</div><div class="coyu">✓ ${d.currentOyster.updated}</div></div>`:''}
         ${d.currentAmuse?`<div class="curoy"><div class="coyk"><span class="live"></span>CURRENT AMUSE</div><div class="coyn">${d.currentAmuse.name}</div><div class="coyo">${d.currentAmuse.served}</div><div class="coyp">${d.currentAmuse.profile}</div><div class="coyu">✓ ${d.currentAmuse.updated}</div></div>`:''}
         <div class="brow ingfold"><span class="blabel ingtoggle" data-ingtoggle>🌿 Ingredients <span class="plus">＋</span></span><div class="bcontent ingbody"><div class="inglist">${ingProse(d.ingredients)}</div></div></div>
         ${brow('🫙 Sauces',d.sauces.length?`<div class="chips2">${chipsList(d.sauces,{link:true})}</div>`:'')}
@@ -3558,7 +3581,7 @@
     function render(){var s=document.getElementById('wizSteps'),b=document.getElementById('wizBody');if(!s||!b)return;var ti=document.getElementById('wizTitle'),pi=document.getElementById('wizPill');if(ti)ti.textContent=W.edit?'Edit Item':'Add Item';if(pi)pi.textContent=W.edit?'◆ MANAGER · EDIT ITEM':'◆ MANAGER · ADD ITEM';s.innerHTML=rSteps();b.innerHTML=step===1?rStep1():step===2?rStep2():step===3?rStep3():step===4?rStepLinks():rStep4();}
 
     window.__wizStart=function(){step=1;W=blank();render();};
-    window.openEditor=function(item){step=3;W=blank();W.edit=true;W.origName=item.name;W.type='Food';W.cat=item.cat||'';W.f.name=item.name||'';W.f.sub=item.sub||'';W.f.price=item.price||'';W.f.tableside=item.tableside||'';W.f.ingredients=(item.ingredients||[]).slice();W.f.sauces=(item.sauces||[]).slice();W.f.garnish=(item.garnish||[]).slice();W.f.prep=item.prep||'';(item.allerg||[]).forEach(function(a){var key=null;ALLERGENS.forEach(function(x){if(x.toLowerCase()===String(a).toLowerCase())key=x;});if(key)W.allerg[key]='present';else if(/onion|garlic|shallot|chive|allium/i.test(a))W.allerg.Allium='present';else if(/seafood|fish|anchov|dashi/i.test(a))W.allerg.Fish='present';else if(/shell|shrimp|crab|lobster/i.test(a))W.allerg.Shellfish='present';});try{if(typeof ALINK!=='undefined'&&ALINK[item.name]){Object.keys(ALINK[item.name]).forEach(function(al){var _x=ALINK[item.name][al];W.links[al]={component:(_x.component||'').split(', ')[0],removable:_x.removable,note:_x.note||''};});}}catch(e){}W.newTerms=detectNew();render();go('additem');};
+    window.openEditor=function(item){step=3;W=blank();W.edit=true;W.origName=item.name;W.type='Food';W.cat=item.cat||'';W.f.name=item.name||'';W.f.sub=item.sub||'';W.f.price=item.price||'';W.f.tableside=item.tableside||'';W.f.ingredients=(item.ingredients||[]).slice();W.f.sauces=(item.sauces||[]).slice();W.f.garnish=(item.garnish||[]).slice();W.f.prep=item.prep||'';(item.allerg||[]).forEach(function(a){var key=null;ALLERGENS.forEach(function(x){if(x.toLowerCase()===String(a).toLowerCase())key=x;});if(key)W.allerg[key]='present';else if(/onion|garlic|shallot|chive|allium/i.test(a))W.allerg.Allium='present';else if(/seafood|fish|anchov|dashi/i.test(a))W.allerg.Fish='present';else if(/shell|shrimp|crab|lobster/i.test(a))W.allerg.Shellfish='present';});try{if(typeof ALINK!=='undefined'&&ALINK[item.name]){Object.keys(ALINK[item.name]).forEach(function(al){var _x=ALINK[item.name][al];W.links[al]={component:(_x.component||'').split(', ')[0],removable:_x.removable,note:_x.note||''};});}}catch(e){}W.newTerms=detectNew();window.__wizKeep=true;render();go('additem');};
 
     document.addEventListener('input',function(e){var t=e.target;if(t&&t.getAttribute&&t.getAttribute('data-lknote')!=null&&t.closest&&t.closest('#view-additem')){var a=t.getAttribute('data-lknote');W.links[a]=W.links[a]||{};W.links[a].note=t.value;}});
     document.addEventListener('click',function(e){
@@ -3575,7 +3598,7 @@
       if(e.target.closest('[data-wdone]')){go('manage');return;}
     });
     var _show4=window.show;
-    window.show=function(view){_show4(view);if(view==='additem'&&(!W.edit||W.published)){if(window.__wizStart)window.__wizStart();}};
+    window.show=function(view){_show4(view);if(view==='additem'){if(window.__wizKeep){window.__wizKeep=false;}else if(window.__wizStart){window.__wizStart();}}};
   })();
 
   /* ===================== TEAM / 86 / VERIFY / SETTINGS ===================== */
@@ -3925,17 +3948,17 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
   function algchips(item,arr){if(!arr||!arr.length)return '';var chips=arr.map(function(a){var st=algStatus(item,a);var e=EMX[a]||'⚠';return '<span class="pr-ac st-'+st+'">'+e+' '+esc(a)+'<span class="w">'+ALGW[st]+'</span></span>';}).join('');return '<div class="pr-alghead">Allergens</div><div class="pr-alg2">'+chips+'</div>';}
   function alegend(){return '<div class="pr-leg"><b>Allergen key</b><span><i class="i"></i>Inherent · can’t remove</span><span><i class="r"></i>Verified removable</span><span><i class="p"></i>Pending kitchen check</span></div>';}
   var FOOD_ORDER=["AMUSE","TAPAS","RAW BAR","SALADS","SIGNATURES","WATER","EARTH","VEGETABLES","SUSHI","PASTRY"];
-  function foodItem(d){return '<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l">'+esc(d.tableside)+'</div>':'')+comp('Ingredients',d.ingredients,'ing')+comp('Sauces',d.sauces,'sau')+comp('Garnish',d.garnish,'gar')+(d.plating?'<div class="pr-l"><b>Plating:</b> '+esc(d.plating)+'</div>':'')+algchips(d.name,d.allerg)+'</div></div>';}
-  function bevItem(d){var base=(d.base&&d.base.length)?d.base.map(function(b){return b[0]+(b[1]?' ('+b[1]+')':'');}):[];return '<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l">'+esc(d.tableside)+'</div>':'')+comp('Base',base,'sau')+comp('Ingredients',d.ingredients,'ing')+comp('Garnish',d.garnish,'gar')+algchips(d.name,d.allerg)+'</div></div>';}
+  function foodItem(d){return '<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l pr-desc">'+esc(d.tableside)+'</div>':'')+'<div class="pr-mid">'+comp('Ingredients',d.ingredients,'ing')+comp('Sauces',d.sauces,'sau')+comp('Garnish',d.garnish,'gar')+(d.plating?'<div class="pr-l"><b>Portion:</b> '+esc(d.plating)+'</div>':'')+(d.prep?'<div class="pr-l"><b>Preparation:</b> '+esc(d.prep)+'</div>':'')+'</div>'+algchips(d.name,d.allerg)+'</div></div>';}
+  function bevItem(d){var base=(d.base&&d.base.length)?d.base.map(function(b){return b[0]+(b[1]?' ('+b[1]+')':'');}):[];return '<div class="pr-item">'+imgdiv(d.photo)+'<div class="pr-info"><div class="pr-nm"><span>'+esc(d.name)+'</span><span class="pr-pr">'+esc(d.price)+'</span></div>'+(d.sub?'<div class="pr-sub">'+esc(d.sub)+'</div>':'')+(d.tableside?'<div class="pr-l pr-desc">'+esc(d.tableside)+'</div>':'')+'<div class="pr-mid">'+comp('Base',base,'sau')+comp('Ingredients',d.ingredients,'ing')+comp('Garnish',d.garnish,'gar')+'</div>'+algchips(d.name,d.allerg)+'</div></div>';}
   /* pack units (each = optional section header + one card) into fixed pages of 2 so print is exactly 2/page regardless of device scaling */
-  function paginate(units){var h='';for(var i=0;i<units.length;i+=2){h+='<div class="pr-page">'+units[i]+(units[i+1]||'')+'</div>';}return h;}
+  function paginate(units,pre){var h='',first=true;for(var i=0;i<units.length;i+=3){h+='<div class="pr-page">'+(first?(pre||''):'')+'<div class="pr-unit">'+units[i]+'</div>'+(units[i+1]?'<div class="pr-unit">'+units[i+1]+'</div>':'')+(units[i+2]?'<div class="pr-unit">'+units[i+2]+'</div>':'')+'</div>';first=false;}return h;}
   function buildFood(){
     var units=[],lastSec=null;
     FOOD_ORDER.forEach(function(sec){
       var items=(typeof FOOD!=='undefined'?FOOD:[]).filter(function(d){return (d.cat||'').toUpperCase()===sec;});
       items.forEach(function(d){var hdr=(sec!==lastSec)?'<div class="pr-sec">'+sec+'</div>':'';lastSec=sec;units.push(hdr+foodItem(d));});
     });
-    return head('Food Menu')+alegend()+paginate(units)+foot();
+    return paginate(units,head('Food Menu')+alegend())+foot();
   }
   function buildBev(){
     var ck=(typeof BEV!=='undefined'?BEV:[]).filter(function(d){return d.kind!=='wine';});
@@ -3944,7 +3967,7 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     senses.forEach(function(sn){
       ck.filter(function(d){return d.sense===sn;}).forEach(function(d){var hdr=(sn!==lastSec)?'<div class="pr-sec">'+esc(sn)+'</div>':'';lastSec=sn;units.push(hdr+bevItem(d));});
     });
-    return head('Drinks Menu')+alegend()+paginate(units)+foot();
+    return paginate(units,head('Drinks Menu')+alegend())+foot();
   }
   function buildWine(){
     var h=head('Wine List');
@@ -4012,7 +4035,10 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
   function dlbl(t){try{return new Date(t).toLocaleDateString('en-US',{month:'short',day:'numeric'});}catch(e){return '';}}
   window.PULSE_FEED=[
     {kind:'amuse',emo:'🥢',tag:'CURRENT AMUSE',tagc:'gold',title:'Salmon Gunkan Tartare',sub:'Compliments of the kitchen · select guests · updated Jul 12 — tap to study',posted:now,live:true,dish:findDish(/gunkan tartare/i)},
-    {kind:'oyster',emo:'🦪',tag:'CURRENT OYSTER',tagc:'gold',title:'Today’s oyster: Miyagi',sub:'Half-dozen · updated by Kitchen · tap to view',posted:now,live:true,dish:findDish(/oyster/i)},
+    {kind:'oyster',emo:'🦪',tag:'CURRENT OYSTERS',tagc:'gold',title:'Miyagi',sub:'Miyagi Prefecture, Japan · half-dozen · updated by Kitchen — tap to view',posted:now,live:true,dish:findDish(/oyster/i)},
+    {kind:'notice',emo:'🧥',tag:'MANAGER · PINNED',tagc:'mgr',title:'Grooming standards check today',sub:'Line-up inspection at 4:30 PM — review the standards before your shift',posted:now,ndur:'today'},
+    {kind:'notice',emo:'🥂',tag:'MANAGER · PINNED',tagc:'mgr',title:'Full terrace buy-out today, 6–10 PM',sub:'Private event on the terrace — regular service resumes after 10 PM',posted:now,ndur:'until 10 PM'},
+    {kind:'notice',emo:'🚗',tag:'MANAGER · PINNED',tagc:'mgr',title:'Heavy traffic reported around Collins Ave',sub:'Plan your arrival with extra time tonight',posted:now,ndur:'until 6 PM'},
     {kind:'special',emo:'✨',tag:'ACTIVE SPECIAL',tagc:'spec',title:'Dry Aged Wagyu Sliders',sub:'Now running EVERY Friday & Saturday (updated Jul 11) — no longer a one-day special',posted:now-1*D,sched:'FRI & SAT',dish:findDish(/sliders/i)||'dry-aged-wagyu-sliders',prov:true},
     {kind:'btg-add',emo:'🍷',tag:'NEW BTG WINE',tagc:'add',title:'Et Fille Pinot Noir joins the glass pour',sub:'Willamette Valley · 92 pts James Suckling — tap to study the new card',posted:now-2*D,drink:'et-fille-pinot-noir'},
     {kind:'btg-out',emo:'⛔',tag:'BTG · REMOVED',tagc:'out',title:'Mateo Pinot Noir is off the glass pour',sub:'No longer available by the glass — stop offering it',posted:now-2*D},
@@ -4020,6 +4046,7 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     {kind:'dish-out',emo:'⛔',tag:'REMOVED',tagc:'out',title:'Chicken Yakitori is off the menu',sub:'Removed from the menu — stop offering it',posted:now-4*D}
   ];
   function leftOf(p){
+    if(p.ndur)return {t:'📌 '+p.ndur,cls:'thru'};
     if(p.live)return {t:'● LIVE',cls:'live'};
     if(p.sched)return {t:p.sched,cls:'thru'};   /* recurring special: visible while active */
     if(p.activeUntil){var dl=Math.ceil((p.activeUntil-Date.now())/D);return dl<=0?null:{t:'thru '+dlbl(p.activeUntil),cls:'thru'};}
@@ -4032,12 +4059,13 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
   }
   function renderPulse(){
     var el=document.getElementById('pulseFeed'); if(!el)return;
-    var cur='',win='';
+    var pin='',cur='',win='';
     window.PULSE_FEED.forEach(function(p){
       var lf=leftOf(p); if(!lf)return;
-      if(p.live||p.sched||p.activeUntil)cur+=pfCard(p,lf); else win+=pfCard(p,lf);
+      if(p.ndur)pin+=pfCard(p,lf); else if(p.live||p.sched||p.activeUntil)cur+=pfCard(p,lf); else win+=pfCard(p,lf);
     });
     var h='';
+    if(pin)h+='<div class="pf-head"><b>PINNED BY MANAGEMENT</b><span class="pf-hint">duration set on publish · auto-unpins</span></div>'+pin;
     if(cur)h+='<div class="pf-head"><b>CURRENT</b><span class="pf-hint">always live — updated in place</span></div>'+cur;
     if(win)h+='<div class="pf-head"><b>IN &amp; OUT THIS WEEK</b><span class="pf-hint">auto-clears after '+WIN+' days</span></div>'+win;
     el.innerHTML=h;
@@ -4099,12 +4127,13 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     /* live items count */
     var oi=document.getElementById('ovItems'); if(oi)oi.textContent=itemsLive();
     /* stat tiles -> shortcuts */
-    [['ovItems','managelib'],['ovSpecial','creator'],['ovPending','verify']].forEach(function(m){
+    [['ovItems','managelib'],['ovSpecial','creator'],['ovLinked','alink']].forEach(function(m){
       var el=document.getElementById(m[0]); if(!el)return; var tile=el.closest('.mgr-ov-item');
       if(tile&&!tile.getAttribute('data-mgo'))tile.setAttribute('data-mgo',m[1]);
     });
-    /* allergen links row chip */
+    /* allergen links row chip + coverage tile (replaces the duplicated "Need review" tile) */
     var u=unlinkedCount();
+    var ol=document.getElementById('ovLinked'); if(ol)ol.textContent=(u.total?Math.round((u.total-u.unlinked)/u.total*100):100)+'%';
     var row=document.querySelector('#mgrHub .mgr-row[data-mgo="alink"]');
     if(row&&!row.querySelector('.mgr-row-chip')){var ch=document.createElement('span');ch.className='mgr-row-chip';row.insertBefore(ch,row.querySelector('.mgr-row-main').nextSibling);}
     if(row){var c=row.querySelector('.mgr-row-chip');if(c)c.textContent=u.unlinked+' unlinked';}
@@ -4112,9 +4141,9 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     var hub=document.getElementById('mgrHub'); if(!hub)return;
     var strip=document.getElementById('mgrNeed');
     if(!strip){strip=document.createElement('div');strip.id='mgrNeed';strip.className='mgr-need';hub.parentNode.insertBefore(strip,hub);}
-    var pending=parseInt((document.getElementById('ovPending')||{}).textContent||'0',10)||0;
+    var pending=document.querySelectorAll('#view-verify .vq-card').length||5;
     var h='<div class="mgr-need-t">Needs your attention</div>';
-    if(pending)h+='<button class="mgr-need-chip warn" data-mgo="verify">🕒 '+pending+' review'+(pending!==1?'s':'')+' pending</button>';
+    if(pending)h+='<button class="mgr-need-chip warn" data-mgo="verify">🕒 '+pending+' pending review'+(pending!==1?'s':'')+'</button>';
     if(u.unlinked)h+='<button class="mgr-need-chip warn" data-mgo="alink">⚠ '+u.unlinked+' allergen flag'+(u.unlinked!==1?'s':'')+' unlinked</button>';
     h+='<button class="mgr-need-chip gold" data-mgo="weeklyedit">📝 Weekly Points — draft</button>';
     if(!pending&&!u.unlinked)h+='<span class="mgr-need-chip ok">✓ All caught up</span>';
@@ -4221,16 +4250,18 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     if(ac){
       var q=ac.textContent.trim();
       var A={
-        "Allergens in the Wagyu?":"The <b>Wagyu Skirt Steak</b> flags <b>Sesame, Gluten, Garlic, Onion and Spice</b>. The gluten lives in the sweet-and-sour glaze (soy sauce) — verified by the kitchen, not removable. Tap the dish card for the full source map.",
-        "How to pour sake":"This week’s points feature the <b>sake BTG</b> — see Weekly Points for the service focus. Full pour SOPs arrive with the Ops-manual integration; in this demo I answer from the verified menu core.",
-        "What's in a Jade Reverie?":"A tropical tall drink — pandan-infused Bacardi 8 and barley E11even vodka, pistachio-pandan orgeat, falernum, pandan liqueur, pineapple and lime, misted with Palo Santo. Heads up — it flags <b>Nuts, Citrus and Gluten</b>."
+        "Tree-nut allergy — is the Hamachi Crudo safe?":"The <b>Hamachi Crudo</b> lists no tree nuts in its components (coconut-avocado coulis, cilantro oil, lime caviar). <b>One caution:</b> it contains <b>coconut</b>, and in some cases guests and allergists treat coconut as a tree nut — verify the specific allergy with the table. It is also prepared in a shared station; flag severe allergies to the kitchen.<div class=\"source\">✓ Source: Food menu · verified components</div>",
+        "Best wine pairings for the Hamachi?":"Top two from the verified pairing map:<br>1 · <b>Château Sainte Marguerite ‘Fantastique’</b> — Provence Cru Classé rosé: the delicate crudo mirrors the wine’s crisp minerality (verified top pairing).<br>2 · <b>Domaine des Féraud ‘Prestige’</b> — organic Provence rosé: the avocado coulis meets its bright berry fruit.<div class=\"source\">✓ Source: Wine list · MILA pairings</div>",
+        "Allergens in the Wagyu?":"The <b>Wagyu Skirt Steak</b> flags <b>Sesame, Gluten, Garlic, Onion and Spice</b>. The gluten lives in the sweet-and-sour glaze (soy sauce) — verified by the kitchen, not removable. Tap the dish card for the full source map.<div class=\"source\">✓ Source: Food menu · allergen links</div>",
+        "What's the current amuse?":"<b>Salmon Gunkan Tartare</b> — cured salmon &amp; cucumber gunkan with yuzu-avocado-jalapeño dressing, wasabi crème fraîche and crispy capers. Compliments of the kitchen for select guests.<div class=\"source\">✓ Source: Kitchen · updated Jul 12</div>",
+        "What's in a Jade Reverie?":"A tropical tall drink — pandan-infused Bacardi 8 and barley E11even vodka, pistachio-pandan orgeat, falernum, pandan liqueur, pineapple and lime, misted with Palo Santo. Heads up — it flags <b>Nuts, Citrus and Gluten</b>.<div class=\"source\">✓ Source: Beverages · verified</div>"
       }[q]||"In this demo I answer from MILA’s verified core — try one of the example questions.";
       var msgs=document.getElementById('msgs'); if(!msgs)return;
       msgs.insertAdjacentHTML('beforeend','<div class="row me"><div class="bub me">'+q+'</div></div>');
       msgs.insertAdjacentHTML('beforeend','<div class="row"><div class="bub ai typing">Zapheria is checking the verified core…</div></div>');
       msgs.scrollTop=msgs.scrollHeight;
       setTimeout(function(){
-        var t=msgs.querySelector('.bub.ai.typing'); if(t){t.classList.remove('typing');t.style.fontStyle='';t.innerHTML=A+'<div class="source">✓ Source: verified core</div>';}
+        var t=msgs.querySelector('.bub.ai.typing'); if(t){t.classList.remove('typing');t.style.fontStyle='';t.innerHTML=A+(A.indexOf('class="source"')>=0?'':'<div class="source">✓ Source: verified core</div>');}
         msgs.scrollTop=msgs.scrollHeight;
       },900);
       return;
@@ -4295,8 +4326,9 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     gr.addEventListener('touchstart',function(e){y0=e.touches[0].clientY;dy=0;drag=true;sh.style.transition='none';},{passive:true});
     gr.addEventListener('touchmove',function(e){
       if(!drag)return; dy=Math.max(0,e.touches[0].clientY-y0);
-      var base=getComputedStyle(sh).transform; sh.style.transform='';
-      sh.style.transform=(sh.id==='pnSheet'||sh.id==='wpxSheet')?'translate(-50%,'+dy+'px)':'translateY('+dy+'px)';
+      /* all grab-bar sheets are horizontally centred with translate(-50%, …) — keep the X
+         component while dragging or the sheet jumps sideways (iOS bug Dani reported) */
+      sh.style.transform='translate(-50%,'+dy+'px)';
       if(dy>4)e.preventDefault();
     },{passive:false});
     gr.addEventListener('touchend',function(){
@@ -4305,6 +4337,28 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
       if(dy>90)cfg.close();
       dy=0;
     });
+  });
+})();
+</script>
+<script>
+(function(){
+  document.addEventListener('click',function(e){
+    /* pin-duration selector (single select) */
+    var ch=e.target.closest('#pinDur .uchip');
+    if(ch){ch.parentNode.querySelectorAll('.uchip').forEach(function(x){x.classList.remove('on');});ch.classList.add('on');return;}
+    /* general post -> pinned Pulse notice with the chosen duration */
+    var pb=e.target.closest('#view-post .publishbtn');
+    if(pb&&window.pushPulse&&!pb.__pinned){pb.__pinned=true;setTimeout(function(){pb.__pinned=false;},1500);
+      var inps=document.querySelectorAll('#view-post .field .inp');
+      var ttl=(inps[0]||{}).textContent||'General post';
+      var msg=(inps[1]||{}).textContent||'';
+      var sel=((document.querySelector('#pinDur .uchip.on')||{}).textContent||'Today');
+      var dur=sel==='Until I unpin'?'pinned':(sel==='Today'?'today':'for '+sel.toLowerCase());
+      window.pushPulse({kind:'notice',emo:'📣',tag:'MANAGER · PINNED',tagc:'mgr',title:ttl,sub:msg,ndur:dur});
+      return;}
+    /* specials: reveal blank composer */
+    var sn=e.target.closest('#spNew');
+    if(sn){var c=document.getElementById('spComposer');if(c)c.style.display='block';sn.textContent='New special — provisional until verified';sn.style.borderStyle='solid';sn.disabled=true;return;}
   });
 })();
 </script>
