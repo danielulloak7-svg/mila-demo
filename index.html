@@ -153,6 +153,24 @@
   .mgr-qa-chip{appearance:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--ink);background:var(--cream-card);border:1px solid var(--line);border-radius:18px;padding:8px 13px;cursor:pointer;box-shadow:var(--e1);transition:transform .1s ease}
   .mgr-qa-chip:active{transform:scale(.96)}
 
+
+  /* login: agnostic Zapheria; venue welcome shows only after sign-in */
+  #lgWelcome{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;background:var(--cream);opacity:0;pointer-events:none;transition:opacity .45s ease}
+  #lgWelcome.on{opacity:1;pointer-events:auto}
+  #lgWelcome.bye{opacity:0}
+  .lgw-inner{text-align:center}
+  .lgw-spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;margin:0 auto;animation:wizspin .8s linear infinite;transition:opacity .3s ease,height .3s ease,margin .3s ease}
+  #lgWelcome.ready .lgw-spin{opacity:0;height:0;margin:0;border-width:0}
+  .lgw-body{opacity:0;transition:opacity .55s ease .12s}
+  #lgWelcome.ready .lgw-body{opacity:1}
+  .lgw-hi{font-size:10.5px;letter-spacing:2.6px;color:var(--muted);text-transform:uppercase}
+  .lgw-brand{font-family:var(--serif);font-weight:500;font-size:42px;letter-spacing:11px;color:var(--ink);margin-top:10px;padding-left:11px}
+  .lgw-venue{font-size:10px;letter-spacing:3.2px;color:var(--gold-deep);margin-top:3px;text-transform:uppercase}
+  .lgw-user{display:flex;align-items:center;gap:11px;justify-content:center;margin-top:28px}
+  .lgw-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,var(--gold),var(--gold-deep));color:var(--cream);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(143,111,69,.35)}
+  .lgw-name{font-family:var(--serif);font-size:17.5px;color:var(--ink);text-align:left}
+  .lgw-role{font-size:10.5px;color:var(--muted);text-align:left;margin-top:1px}
+
 </style>
 <style>
   :root{
@@ -1359,8 +1377,8 @@
     <div class="lg-center">
       <div class="lg-mark"><svg viewBox="0 0 48 48" fill="none" stroke="#16161A" stroke-width="1.5"><circle cx="24" cy="24" r="20"/><ellipse cx="24" cy="24" rx="8" ry="20"/><line x1="4" y1="24" x2="44" y2="24"/></svg></div>
       <div class="lg-word">Zapheria</div>
-      <div class="lg-venue">MILĀ MIAMI BEACH</div>
-      <div class="lg-field"><div class="lg-label">Email</div><div class="lg-input">daniel.ulloa@mila.com</div></div>
+      <div class="lg-venue">CONNECTED · VERIFIED · KNOWLEDGE</div>
+      <div class="lg-field"><div class="lg-label">Email</div><div class="lg-input">danielulloak7@gmail.com</div></div>
       <div class="lg-field"><div class="lg-label">Password</div><div class="lg-input lg-dots">•••••••••••</div></div>
       <button class="lg-btn" data-signin>Sign in</button>
       <div class="lg-forgot">Forgot password?</div>
@@ -1369,6 +1387,16 @@
   </div>
 </div>
 
+
+<div id="lgWelcome"><div class="lgw-inner">
+  <div class="lgw-spin"></div>
+  <div class="lgw-body">
+    <div class="lgw-hi">Welcome to</div>
+    <div class="lgw-brand">MILĀ</div>
+    <div class="lgw-venue">Miami Beach</div>
+    <div class="lgw-user"><span class="lgw-av">DU</span><div><div class="lgw-name">Daniel Ulloa</div><div class="lgw-role">Drink Runner</div></div></div>
+  </div>
+</div></div>
 <div class="app">
 <div class="view" id="view-home">
   <div class="topbar" id="topbar"><div class="condensed"><span class="mk" role="img" aria-label="MILĀ"></span></div><button class="pls-bell" data-nav="updates" aria-label="Updates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="pls-badge">3</span></button></div>
@@ -3016,7 +3044,7 @@
     const dish=e.target.closest('[data-dish]'); if(dish){goToDish(dish.getAttribute('data-dish'));return;}
     const nav=e.target.closest('[data-nav]'); if(nav){go(nav.getAttribute('data-nav'));return;}
     if(e.target.closest('[data-back]')){goBack();return;}
-    if(e.target.closest('[data-signin]')){var _lg=document.getElementById('login');_lg.classList.add('gone');setTimeout(function(){_lg.style.display='none';},500);return;}
+    if(e.target.closest('[data-signin]')){var _lg=document.getElementById('login');var _w=document.getElementById('lgWelcome');if(_w){_w.style.display='';_w.classList.add('on');}setTimeout(function(){_lg.classList.add('gone');},200);setTimeout(function(){_lg.style.display='none';},650);setTimeout(function(){if(_w)_w.classList.add('ready');},1000);setTimeout(function(){if(_w)_w.classList.add('bye');},2600);setTimeout(function(){if(_w){_w.classList.remove('on','ready','bye');_w.style.display='none';}},3150);return;}
     const fc=e.target.closest('.fchip'); if(fc){[...fc.parentElement.children].forEach(c=>c.classList.remove('on'));fc.classList.add('on');return;}
     const uc=e.target.closest('.uchip'); if(uc){uc.classList.toggle('on');return;}
     if(e.target.closest('[data-ffopen]')){ffOpen();return;}
