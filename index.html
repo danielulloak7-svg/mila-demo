@@ -1154,7 +1154,7 @@
     /* exactly two cards per printed page */
     .pr-page{height:240mm;display:flex;flex-direction:column;break-after:page;page-break-after:always;break-inside:avoid;overflow:hidden}
     .pr-page:last-child{break-after:auto;page-break-after:auto}
-    .pr-unit{flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;border-bottom:1px solid #e5dfd0;padding-bottom:2.5mm;margin-bottom:2.5mm}
+    .pr-unit{flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;border-bottom:1px solid #e5dfd0;padding-bottom:3.2mm;margin-bottom:3.2mm}
     .pr-unit:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
     .pr-item{display:flex;gap:5mm;align-items:stretch;flex:1;min-height:0;margin:0;padding:0;border:none}
     .pr-item .pr-img{align-self:flex-start}
@@ -1165,10 +1165,13 @@
     .pr-mid{flex:1 1 auto;min-height:0;overflow:hidden}
     .pr-nm{font-family:"Fraunces",Georgia,serif;font-size:11.5pt;font-weight:600;display:flex;justify-content:space-between;gap:4mm;line-height:1.12}
     .pr-pr{color:#8f6f45;white-space:nowrap;font-size:10.5pt}
-    .pr-sub{font-size:8pt;font-style:italic;color:#555;margin:.8mm 0 1.2mm}
-    .pr-l{font-size:7.8pt;line-height:1.32;margin-bottom:.6mm;color:#2a241c}
+    .pr-sub{font-size:8.5pt;font-style:italic;color:#555;margin:.8mm 0 1.6mm}
+    .pr-l{font-size:8.2pt;line-height:1.42;margin-bottom:1mm;color:#2a241c}
     .pr-l.pr-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .pr-l b{color:#8f6f45;text-transform:uppercase;font-size:7.5pt;letter-spacing:.4px}
+    .pr-l b{color:#8f6f45;text-transform:uppercase;font-size:7pt;letter-spacing:.4px}
+    .pr-l b.c-ing{color:#3c4a36}
+    .pr-l b.c-sau{color:#8a5a2f}
+    .pr-l b.c-gar{color:#534166}
     .pr-alg{font-size:8.5pt;color:#b4524a;margin-top:2mm;font-weight:600}
     /* component chips (parity with the on-screen menu): emoji + section colour */
     .pr-comp{display:flex;flex-wrap:wrap;gap:1.2mm;margin:.3mm 0 .8mm}
@@ -1179,7 +1182,7 @@
     .pr-cc.sau{color:#8a5a2f;background:rgba(176,120,60,.15);border-color:rgba(176,120,60,.44)}
     .pr-cc.gar{color:#534166;background:rgba(150,120,180,.15);border-color:rgba(150,120,180,.44)}
     /* allergen chips with 3-colour status */
-    .pr-alghead{font-size:6.2pt;color:#8f6f45;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:1.2mm;margin-bottom:.4mm}
+    .pr-alghead{font-size:6.4pt;color:#8f6f45;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:1.6mm;margin-bottom:.6mm}
     .pr-alg2{display:flex;flex-wrap:wrap;gap:1.6mm;align-items:center}
     .pr-ac{font-size:6.8pt;font-weight:600;border-radius:7px;padding:.7mm 2mm;display:inline-flex;align-items:center;gap:1mm;line-height:1.2;border:.3mm solid}
     .pr-ac .w{font-size:6.2pt;letter-spacing:.1px;font-weight:800;opacity:.92}
@@ -4012,7 +4015,7 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
   var EMX=(typeof EM!=='undefined')?EM:{};
   var EMKWX=(typeof EMKW!=='undefined')?EMKW:[];
   function emc(t){if(EMX[t])return EMX[t];for(var i=0;i<EMKWX.length;i++){if(EMKWX[i][0].test(t))return EMKWX[i][1];}return '';}
-  function comp(label,arr,kind){if(!arr||!arr.length)return '';var chips=arr.map(function(t){var e=emc(t);return '<span class="pr-cc '+kind+'">'+(e?'<span class="em">'+e+'</span>':'')+esc(t)+'</span>';}).join('');return '<div class="pr-clab">'+label+'</div><div class="pr-comp">'+chips+'</div>';}
+  function comp(label,arr,kind){if(!arr||!arr.length)return '';return '<div class="pr-l"><b class="c-'+kind+'">'+label+':</b> '+arr.map(function(t){var e=emc(t);return (e?e+'\u2009':'')+esc(t);}).join(', ')+'</div>';}
   function algGet(item,alg){var m=(typeof ALINK!=='undefined')?ALINK[item]:null;if(!m)return null;if(m[alg])return m[alg];var k=Object.keys(m).find(function(x){return x.toLowerCase()===String(alg).toLowerCase();});return k?m[k]:null;}
   function algStatus(item,alg){var e=algGet(item,alg);if(!e)return 'pending';if(e.verifiedBy){if(e.removable==='yes')return 'removable';if(e.removable==='no')return 'inherent';}return 'pending';}
   var ALGW={inherent:'Inherent',removable:'Removable',pending:'Pending'};
