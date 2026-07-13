@@ -107,6 +107,8 @@
   .pfd-card{flex:0 0 205px;scroll-snap-align:start;background:var(--cream-card);border:1px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:transform .12s ease}
   .pfd-card:active{transform:scale(.98)}
   .pfd-card .pf-tag{align-self:flex-start}
+  .pfd-card-top{display:flex;align-items:center;gap:7px}
+  .pfd-card-emo{font-size:19px;line-height:1;flex:none}
   .pfd-card-t{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .pfd-card-s{font-size:10px;color:var(--muted);line-height:1.4;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .pfd-card .pf-left{align-self:flex-start}
@@ -4115,7 +4117,7 @@ window.openLbx=function(src){var l=document.getElementById('lbx');l.querySelecto
     if(win.length){
       h+='<div class="pf-head"><b>IN &amp; OUT THIS WEEK</b><span class="pf-hint">swipe → · auto-clears after '+WIN+' days</span></div><div class="pfd-car">'
         +win.map(function(x){var p=x[0],lf=x[1];
-          return '<div class="pfd-card pf-card"'+attrsOf(p)+'><span class="pf-tag t-'+(p.tagc||'gold')+'">'+p.tag+'</span><div class="pfd-card-t">'+p.title+'</div><div class="pfd-card-s">'+p.sub+'</div><span class="pf-left '+lf.cls+'">'+lf.t+'</span></div>';}).join('')
+          return '<div class="pfd-card pf-card"'+attrsOf(p)+'><div class="pfd-card-top"><span class="pfd-card-emo">'+p.emo+'</span><span class="pf-tag t-'+(p.tagc||'gold')+'">'+p.tag+'</span></div><div class="pfd-card-t">'+p.title+'</div><div class="pfd-card-s">'+p.sub+'</div><span class="pf-left '+lf.cls+'">'+lf.t+'</span></div>';}).join('')
         +'</div>';
     }
     el.innerHTML=h;
