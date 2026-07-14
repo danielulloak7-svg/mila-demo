@@ -94,9 +94,9 @@
   .pfd-carwrap{position:relative}
   .pfd-carwrap::after{content:"";position:absolute;top:0;right:-2px;bottom:10px;width:36px;background:linear-gradient(90deg,rgba(243,240,233,0),#f0ece3 88%);pointer-events:none;border-radius:0 14px 14px 0;opacity:1;transition:opacity .3s}
   .pfd-carwrap.at-end::after{opacity:0}
-  .pfd-dots{display:flex;justify-content:center;gap:6px;margin:0 0 10px}
-  .pfd-dots i{width:6px;height:6px;border-radius:50%;background:rgba(142,133,118,.35);transition:width .25s ease,background .25s ease;cursor:pointer}
-  .pfd-dots i.on{background:var(--gold-deep);width:16px;border-radius:3px}
+  .pfd-dots{display:flex;justify-content:center;gap:6px;margin:0 0 10px;position:relative;z-index:2}
+  .pfd-dots i{width:6px;height:6px;border-radius:50%;background:rgba(142,133,118,.35);transition:width .25s ease,background .25s ease;cursor:pointer;padding:9px;background-clip:content-box;box-sizing:content-box;margin:-9px}
+  .pfd-dots i.on{background:var(--gold-deep);width:16px;border-radius:3px;background-clip:content-box}
   .pfd-pins{display:flex;flex-direction:column;gap:7px;margin-bottom:4px}
   .pfd-pin{display:flex;align-items:center;gap:10px;background:var(--cream-card);border:1px solid var(--line);border-left:3px solid rgba(190,160,70,.6);border-radius:12px;padding:9px 11px}
   .pfd-pin-emo{font-size:17px;flex:none}
@@ -185,6 +185,8 @@
   .pr-onecard .pr-item{align-items:flex-start}
   .pr-onecard .pr-l.pr-desc{display:block;-webkit-line-clamp:unset;overflow:visible}
 
+  .wp-flash{animation:wpFlash .9s ease}
+  @keyframes wpFlash{0%,100%{box-shadow:0 0 0 0 rgba(178,96,13,0)}30%{box-shadow:0 0 0 3px rgba(178,96,13,.35)}}
 </style>
 <style>
   :root{
@@ -1452,7 +1454,7 @@
   <div class="secwrap">
     <h1 class="sectitle">Beverages</h1>
     <div class="fbox">
-    <div class="searchbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>Search drinks or ingredients…</div>
+    <div class="searchbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input id="bevSearch" type="text" placeholder="Search drinks or ingredients…" autocomplete="off"></div>
     <div class="fchips" id="bevChips"></div>
     <div class="collapse"><button class="collapse-toggle" data-collapse aria-label="Toggle filters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button></div>
     </div>
@@ -1469,7 +1471,7 @@
   <div class="secwrap">
     <h1 class="sectitle">Wine Catalog</h1>
     <div class="fbox">
-    <div class="searchbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>Search wines, producers, appellations…</div>
+    <div class="searchbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input id="wineSearch" type="text" placeholder="Search wines, producers, appellations…" autocomplete="off"></div>
     <div class="fchips" id="wineChips"></div>
     <div class="collapse"><button class="collapse-toggle" data-collapse aria-label="Toggle filters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button></div>
     </div>
@@ -1484,7 +1486,7 @@
   <div class="secwrap">
     <h1 class="sectitle">Spirits Catalog</h1>
     <div class="fbox">
-    <div class="searchbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>Search spirits, distilleries, origins…</div>
+    <div class="searchbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input id="spiritSearch" type="text" placeholder="Search spirits, distilleries, origins…" autocomplete="off"></div>
     <div class="fchips" id="spiritChips"></div>
     <div class="collapse"><button class="collapse-toggle" data-collapse aria-label="Toggle filters"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button></div>
     </div>
@@ -2690,14 +2692,16 @@
       renderFood();
     });
   })();
-  var bevState={cat:"All"};
-  function bevMatches(d){if(bevState.cat==="All")return true;return String(d.sense||"").toUpperCase()===bevState.cat.toUpperCase();}
+  var bevState={cat:"All",q:""};
+  function bevText(d){var s=[d.name,d.sub,d.tableside];["ingredients","garnish"].forEach(function(k){if(Array.isArray(d[k]))s=s.concat(d[k]);});if(Array.isArray(d.base))d.base.forEach(function(b){s.push(b&&b[0]);});return s.join(" ").toLowerCase();}
+  function bevMatches(d){if(bevState.cat!=="All"&&String(d.sense||"").toUpperCase()!==bevState.cat.toUpperCase())return false;if(bevState.q&&bevText(d).indexOf(bevState.q)<0)return false;return true;}
   function renderBev(){
     var list=BEV.filter(bevMatches);
     var html=list.length?list.map(bevCard).join(""):'<div class="emptystate">No drinks in this category.</div>';
     document.getElementById('bevFeed').innerHTML=html+`<div class="feed-note">2 cocktails per sense + wines with verified MILĀ pairings.</div>`;
     var bs=document.getElementById('bevShowing');if(bs)bs.textContent=list.length+" drink"+(list.length!==1?"s":"")+(bevState.cat!=="All"?" · "+bevState.cat:"");
   }
+  window.__setBevQ=function(v){bevState.q=v;renderBev();};
   (function(){var w=document.getElementById('bevChips');if(!w)return;w.addEventListener('click',function(e){var b=e.target.closest('.fchip');if(!b)return;w.querySelectorAll('.fchip').forEach(function(c){c.classList.remove('on');});b.classList.add('on');bevState.cat=b.getAttribute('data-bev')||"All";renderBev();});})();
   renderBev();
 
@@ -2745,13 +2749,15 @@
   var wineSectOrder=[["sparkling","Sparkling & Champagne"],["white","White"],["rose","Rosé"],["red","Red"],["sake","Sake"],["dessert","Dessert"],["large","Large Format"]];
   document.getElementById('wineChips').innerHTML=wineChips.map(function(c,i){return '<button class="fchip'+(i===0?' on':'')+'" data-wf="'+c[0]+'">'+c[1]+'</button>';}).join("");
   var wineFilter='all';
+  var wineQ="";
   function renderWineList(){
-    var rows=WINE.filter(function(w){if(wineFilter==='all')return true;if(wineFilter==='btg')return !!w.btg;return w.sect===wineFilter;});
+    var rows=WINE.filter(function(w){var ok=(wineFilter==='all')?true:(wineFilter==='btg'?!!w.btg:w.sect===wineFilter);if(!ok)return false;if(wineQ){var t=[w.name,w.prod,w.grapes,w.sectLabel,w.vint,w.region].join(" ").toLowerCase();if(t.indexOf(wineQ)<0)return false;}return true;});
     var html='';
     wineSectOrder.forEach(function(so){var g=rows.filter(function(w){return w.sect===so[0];});if(!g.length)return;html+='<div class="lgroup">'+so[1]+'</div>'+g.map(wineRow).join('');});
     document.getElementById('wineList').innerHTML=html||'<div class="showing">No wines in this filter.</div>';
     document.getElementById('wineShowing').textContent='Showing '+rows.length+' of '+WINE.length+' selections';
   }
+  window.__setWineQ=function(v){wineQ=v;renderWineList();};
   document.getElementById('wineChips').addEventListener('click',function(e){var b=e.target.closest('.fchip');if(!b)return;this.querySelectorAll('.fchip').forEach(function(c){c.classList.remove('on');});b.classList.add('on');wineFilter=b.getAttribute('data-wf');renderWineList();});
   renderWineList();
 
@@ -2796,13 +2802,15 @@
   var spiritSectOrder=[["vodka","Vodka"],["gin","Gin"],["rum","Rum"],["tequila","Tequila"],["mezcal","Mezcal"],["whiskey","Whiskey"],["cognac","Cognac"],["other","Other"]];
   document.getElementById('spiritChips').innerHTML=spiritChips.map(function(c,i){return '<button class="fchip'+(i===0?' on':'')+'" data-sf="'+c[0]+'">'+c[1]+'</button>';}).join("");
   var spiritFilter='all';
+  var spiritQ="";
   function renderSpiritList(){
-    var rows=SPIRITS.filter(function(s){return spiritFilter==='all'||s.cat===spiritFilter;});
+    var rows=SPIRITS.filter(function(s){if(!(spiritFilter==='all'||s.cat===spiritFilter))return false;if(spiritQ){var t=[s.name,s.dist,s.catLabel,s.origin].join(" ").toLowerCase();if(t.indexOf(spiritQ)<0)return false;}return true;});
     var html='';
     spiritSectOrder.forEach(function(so){var g=rows.filter(function(s){return s.cat===so[0];});if(!g.length)return;html+='<div class="lgroup">'+so[1]+'</div>'+g.map(spiritRow).join('');});
     document.getElementById('spiritList').innerHTML=html||'<div class="showing">No spirits in this filter.</div>';
     document.getElementById('spiritShowing').textContent='Showing '+rows.length+' of '+SPIRITS.length+' selections';
   }
+  window.__setSpiritQ=function(v){spiritQ=v;renderSpiritList();};
   document.getElementById('spiritChips').addEventListener('click',function(e){var b=e.target.closest('.fchip');if(!b)return;this.querySelectorAll('.fchip').forEach(function(c){c.classList.remove('on');});b.classList.add('on');spiritFilter=b.getAttribute('data-sf');renderSpiritList();});
   renderSpiritList();
   function openSpirit(s){s.detail==='beluga'?openSheet(belugaDetail()):openSheet(basicSpirit(s));}
@@ -3197,13 +3205,16 @@
       if(collapse)ctrl.appendChild(collapse);
     });
     /* COLLAPSE on scroll-down — never auto-expand (expand is an explicit action) */
-    var DIST=168, PULL=90, sticky=false;
+    var DIST=168, PULL=90, sticky=false, expanding=false;
     function setCol(v,p){v.style.setProperty('--col', p<=0?'0':(p>=1?'1':p.toFixed(3)));}
-    function animExpand(v){sticky=false;v.classList.add('col-anim');v.classList.remove('collapsed');setCol(v,0);setTimeout(function(){v.classList.remove('col-anim');},380);}
-    function animCollapse(v){sticky=true;v.classList.add('col-anim');v.classList.add('collapsed');setCol(v,1);setTimeout(function(){v.classList.remove('col-anim');},380);}
+    /* expand jumps to the very top synchronously, then locks out the scroll handler
+       for a beat so a smooth-scroll pass through y>=DIST can't re-collapse it (tap-to-open race) */
+    function animExpand(v){sticky=false;expanding=true;if(app)app.scrollTop=0;v.classList.add('col-anim');v.classList.remove('collapsed');setCol(v,0);setTimeout(function(){v.classList.remove('col-anim');},380);setTimeout(function(){expanding=false;},460);}
+    function animCollapse(v){expanding=false;sticky=true;v.classList.add('col-anim');v.classList.add('collapsed');setCol(v,1);setTimeout(function(){v.classList.remove('col-anim');},380);}
     function inDish(e){var t=e.target;return !!(t&&t.closest&&t.closest('.backscroll'));}
     function update(){
       ticking=false;
+      if(expanding)return;               /* don't let a settling scroll undo a just-tapped expand */
       var v=activeView();if(!canCollapse(v)){return;}
       if(sticky){setCol(v,1);return;}   /* once collapsed, stay collapsed — never auto-expand */
       /* descending from the top: contract in sync with the scroll */
@@ -3242,8 +3253,8 @@
     document.addEventListener('click',function(e){
       var t=e.target.closest('[data-collapse]');if(!t)return;
       var v=activeView();if(!v)return;
-      if(v.classList.contains('collapsed')){animExpand(v);if(app)app.scrollTo({top:0,behavior:'smooth'});}
-      else{animCollapse(v);if(app&&pos()<DIST)app.scrollTo({top:DIST+6,behavior:'smooth'});}
+      if(v.classList.contains('collapsed')){animExpand(v);/* animExpand jumps to top synchronously */}
+      else{animCollapse(v);if(app&&pos()<DIST)app.scrollTop=DIST+6;}
     },true);
     /* reset to expanded on navigation */
     var _show2=window.show;
@@ -3544,7 +3555,10 @@
       if(wpPub&&!wpPub.classList.contains('done')){wpPub.textContent=hard?('Publish — '+hard+' section'+(hard!==1?'s':'')+' need'+(hard===1?'s':'')+' you first'):'Publish issue to the floor';wpPub.style.opacity=hard?.55:1;}
       if(wpPub&&!wpPub.__wired){wpPub.__wired=1;wpPub.addEventListener('click',function(){
         var lv=WPSLOTS.filter(function(s){return !(s.t==='opt'&&!s.on);});
-        if(lv.some(function(s){return s.st==='needs';}))return;
+        if(lv.some(function(s){return s.st==='needs';})){
+          var panel=document.querySelector('#view-weeklyedit .wp-health');
+          if(panel){panel.scrollIntoView({block:'center',behavior:'smooth'});panel.classList.add('wp-flash');setTimeout(function(){panel.classList.remove('wp-flash');},900);}
+          return;}
         wpPub.classList.add('done');wpPub.textContent='✓ Published — staff notified';
         var st=document.querySelector('#view-weeklyedit .wp-status');if(st){st.textContent='Published · just now';st.style.color='#3f6b4b';}
       });}
@@ -3711,7 +3725,7 @@
       if((t=e.target.closest('[data-lkrem]'))){var _q=t.getAttribute('data-lkrem').split('|');W.links[_q[0]]=W.links[_q[0]]||{};W.links[_q[0]].removable=_q[1];render();return;}
       if((t=e.target.closest('[data-lkclear]'))){var _c=t.getAttribute('data-lkclear');W.links[_c]={note:(W.links[_c]&&W.links[_c].note)||''};render();return;}
       if(e.target.closest('[data-wback]')){if(step===3&&W.edit){go('manage');return;}if(step>1)step--;render();return;}
-      if(e.target.closest('[data-wnext]')){if(step===1){step=2;render();}else if(step===3){readEditor();step=4;render();}else if(step===4){step=5;render();}else if(step===5){commitDish();commitLinks();W.published=true;render();}return;}
+      if(e.target.closest('[data-wnext]')){if(step===1){step=2;render();}else if(step===3){readEditor();step=4;render();}else if(step===4){step=5;render();}else if(step===5){if(!(W.f.name&&W.f.name.trim())){var nm=document.querySelector('#view-additem [data-wnamewarn]');if(!nm){var b=document.querySelector('#view-additem [data-wnext]');if(b)b.insertAdjacentHTML('beforebegin','<div data-wnamewarn style="color:#b2600d;font-size:12px;font-weight:600;text-align:center;margin:6px 0">Add a name before publishing.</div>');}return;}commitDish();commitLinks();W.published=true;render();}return;}
       if(e.target.closest('[data-wdone]')){go('manage');return;}
     });
     var _show4=window.show;
@@ -4530,4 +4544,26 @@ var WP_SHELLF="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQ
 })();
 </script><script>
 (function(){function fillWk(){var el=document.getElementById("wkFoodCard");if(el&&window.__printCard){var h=window.__printCard("Bluefin Chū-Toro Tartare");if(h)el.innerHTML='<div class="pr-onecard">'+h+"</div>";}}setTimeout(fillWk,400);var _s=window.show;if(_s)window.show=function(v){_s(v);if(v==="weekly")setTimeout(fillWk,40);};})();
+</script>
+<script>
+(function(){
+  function wire(id,set){var el=document.getElementById(id);if(!el)return;el.addEventListener('input',function(){set(this.value.trim().toLowerCase());});}
+  wire('bevSearch',function(v){if(window.__setBevQ)window.__setBevQ(v);});
+  wire('wineSearch',function(v){if(window.__setWineQ)window.__setWineQ(v);});
+  wire('spiritSearch',function(v){if(window.__setSpiritQ)window.__setSpiritQ(v);});
+})();
+</script>
+<script>
+(function(){
+  /* category chips behave as a radio group in the post composer */
+  document.addEventListener('click',function(e){
+    var c=e.target.closest('#view-post .uni .uchip');
+    if(c){var grp=c.parentNode;grp.querySelectorAll('.uchip').forEach(function(x){x.classList.remove('on');});c.classList.add('on');return;}
+  });
+  /* make the mock composer fields actually typeable for the demo */
+  function makeEditable(sel){document.querySelectorAll(sel).forEach(function(el){if(el.__ce)return;el.__ce=1;el.setAttribute('contenteditable','true');el.style.cursor='text';
+    el.addEventListener('focus',function(){if(el.classList.contains('ph')){el.textContent='';el.classList.remove('ph');}});});}
+  var _s=window.show;
+  window.show=function(v){_s(v);if(v==='post'||v==='creator'){setTimeout(function(){makeEditable('#view-post .inp');makeEditable('#view-creator .inp');},30);}};
+})();
 </script>
